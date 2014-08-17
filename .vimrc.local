@@ -8,6 +8,8 @@ language messages zh_CN.UTF-8
 set tabstop=4
 set shiftwidth=4
 
+set nospell
+set wrap
 colorscheme molokai
 
 " 按标记折叠
@@ -79,6 +81,8 @@ let g:ctrlp_funky_php_requires            = 1
 " keymap
 vmap <tab> >gv
 vmap <s-tab> <gv
+nnoremap <c-a> ggVG
+
 
 nnoremap <Leader>fu :CtrlPFunky<CR>
 nnoremap <Leader>fU :execute 'CtrlPFunky ' . expand('<cword>')<CR>
