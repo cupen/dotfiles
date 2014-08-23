@@ -1,3 +1,5 @@
 [user]
-email = cupen@foxmail.com
-name = cupen
+	email = cupen@foxmail.com
+	name = cupen
+[push]
+	default = simple
