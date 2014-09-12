@@ -102,7 +102,9 @@ setup_python(){
 
 setup_git(){
     check_command_exists git
-    ln ./.gitconfig ~/.gitconfig
+    git config --global user.name       cupen
+    git config --global user.email      cupen@foxmail.com
+    git config --global push.default    current
 }
 
 setup_conky(){
