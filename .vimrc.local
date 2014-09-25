@@ -48,7 +48,8 @@ let g:syntastic_python_checkers = ['python']
 let g:syntastic_mode_map = { 'mode': 'active',
                            \ 'active_filetypes': ['c', 'php', 'python'],
                            \ 'passive_filetypes': ['java'] }
-
+" spf13 
+let g:spf13_keep_trailing_whitespace = 0
 
 " NERD_Tree
 let NERDTreeWinSize           = 32

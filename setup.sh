@@ -114,7 +114,9 @@ setup_python(){
 
 setup_git(){
     check_command_exists git
-    backup_file_and_makelink ./.gitconfig $home/.gitconfig
+    git config --global user.name       cupen
+    git config --global user.email      cupen@foxmail.com
+    git config --global push.default    current
 }
 
 setup_conky(){
