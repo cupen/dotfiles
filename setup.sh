@@ -119,13 +119,31 @@ setup_git(){
     git config --global push.default    current
 }
 
+setup_fonts(){
+    check_command_exists mkfontscale
+    check_command_exists mkfontdir
+    check_command_exists sudo
+
+    setup_git_repo git@github.com:Lokaltog/powerline-fonts.git ~/.fonts
+
+    localDir="/usr/share/fonts/TTF/powerline"
+    sudo mkdir -p $localDir
+    sudo cp -r ~/.fonts/* $localDir
+    # sudo fc-cache -vf $localDir
+    # sudo mkfontscale $localDir
+    # sudo mkfontdir $localDir
+
+    wget -q https://github.com/Lokaltog/powerline/raw/develop/font/10-powerline-symbols.conf
+    mkdir -p ~/.config/fontconfig/conf.d/
+    mv 10-powerline-symbols.conf ~/.config/fontconfig/conf.d/
+}
+
 setup_conky(){
     backup_file_and_makelink ./.conkyrc $home/.conkyrc
 }
 
-show_menu () {
+show_menu(){
     echo "==========================="
-    let menuItems=$1
     let index=0
     for item in ${menuItems[@]}; do
         echo $index". Run "$item
@@ -138,14 +156,13 @@ show_menu () {
 }
 
 choices_menu(){
-    local $menuItems=$1
     let isContinue=1
     while (( isContinue )); do
         clear
-        show_menu menuItems
+        show_menu
         echo "You can choice one or more like \"1 3 5 7 9\""
         read choices
-        for choice in $choices ; do
+        for choice in $choices; do
             case "$choice" in
             'a')
                 echo "All!!!"
@@ -187,8 +204,9 @@ main(){
         setup_archlinux
         setup_goagent
         setup_zsh
+        setup_fonts
     )
-    choices_menu menuItems
+    choices_menu $menuItems
 }
 
 main
