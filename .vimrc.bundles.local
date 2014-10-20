@@ -1,2 +1,6 @@
-Bundle "Conque-Shell"
-""Plugin "Conque-GDB"
+Bundle "VullScreen"
+Bundle "Vim-Support"
+Bundle "git@github.com:aklt/plantuml-syntax.git"
+" aklt/plantuml-syntax"
+" git@github.com:aklt/plantuml-syntax.git
+

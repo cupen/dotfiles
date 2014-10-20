@@ -3,6 +3,7 @@ source ./base/*.sh
 # source ./archlinux/*.sh
 
 home=$HOME
+curdir=`pwd`
 
 ##
 #
@@ -57,7 +58,7 @@ setup_git_repo() {
 }
 
 backup_file(){
-    if [ -f $a ]; then
+    if [ -f $1 ]; then
         dir=`dirname $1`/.backup
         mkdir -p $dir
         filename=`basename $1`
@@ -65,23 +66,34 @@ backup_file(){
     fi
 }
 
-backup_file_and_makelink(){
+backup_and_makelink(){
     backup_file $2
-    ln -fv $1 $2
+    ln -sfv $1 $2
 }
 
 setup_bash() {
     check_command_exists bash
-    backup_file_and_makelink ./.bashrc $home/.bashrc
+    backup_and_makelink $curdir/.bashrc $home/.bashrc
 }
 
 setup_vim(){
-    setup_git_repo git://github.com/spf13/spf13-vim.git $home/.spf13-vim-3 "3.0"
+    local_dir=$home/.spf13-vim-3
+    # setup_git_repo git://github.com/spf13/spf13-vim.git $local_dir "3.0"
+    let flag=1
     if [ $? -eq 0 ]; then
-        # bash $home/.spf13/bootstrap.sh
-        backup_file_and_makelink ./.gvimrc        $home/.gvimrc
-        backup_file_and_makelink ./.vimrc.local   $home/.vimrc.local
-        backup_file_and_makelink ./.vimrc.bundles.local $home/.vimrc.bundles.local
+        let flag=0
+    fi
+    
+    if [ $? -eq 1 ]; then
+        let flag=0
+    fi
+
+    if [ $flag -eq 0 ]; then
+        # bash $local_dir/bootstrap.sh
+        backup_and_makelink $curdir/.gvimrc              $home/.gvimrc
+        backup_and_makelink $curdir/.vimrc.local         $home/.vimrc.local
+        backup_and_makelink $curdir/.vimrc.before.local  $home/.vimrc.before.local
+        backup_and_makelink $curdir/.vimrc.bundles.local $home/.vimrc.bundles.local
     fi
 }
 
@@ -124,7 +136,7 @@ setup_fonts(){
     check_command_exists mkfontdir
     check_command_exists sudo
 
-    setup_git_repo git@github.com:Lokaltog/powerline-fonts.git ~/.fonts
+    setup_git_repo git@github.com:Lokaltog/powerline-fonts.git $home/.fonts
 
     localDir="/usr/share/fonts/TTF/powerline"
     sudo mkdir -p $localDir
@@ -134,12 +146,12 @@ setup_fonts(){
     # sudo mkfontdir $localDir
 
     wget -q https://github.com/Lokaltog/powerline/raw/develop/font/10-powerline-symbols.conf
-    mkdir -p ~/.config/fontconfig/conf.d/
-    mv 10-powerline-symbols.conf ~/.config/fontconfig/conf.d/
+    mkdir -p $home/.config/fontconfig/conf.d/
+    mv 10-powerline-symbols.conf $home/.config/fontconfig/conf.d/
 }
 
 setup_conky(){
-    backup_file_and_makelink ./.conkyrc $home/.conkyrc
+    backup_and_makelink $curdir/.conkyrc $home/.conkyrc
 }
 
 show_menu(){
