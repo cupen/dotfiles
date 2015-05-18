@@ -2,6 +2,9 @@
 source ./base/*.sh
 # source ./archlinux/*.sh
 
+home=$HOME
+curdir=`pwd`
+
 ##
 #
 # $1 directory of repo
@@ -41,7 +44,6 @@ clone_git_repo(){
 # $3 git branch
 ##
 setup_git_repo() {
-    local $url $dir $branch
     url=${1?"Missing a paramer:url"}
     dir=${2=""}
     branch=$3
@@ -55,45 +57,67 @@ setup_git_repo() {
     fi
 }
 
-setup_bash() {
-    check_command_exists bash
-    setup_git_repo git://github.com/revans/bash-it.git ~/.bash_it
-    if [ $? -eq 0 ]; then
-        bash ~/.bash_it/install.sh
+backup_file(){
+    if [ -f $1 ]; then
+        dir=`dirname $1`/.backup
+        mkdir -p $dir
+        filename=`basename $1`
+        cp -av $1 $dir/$filename"."`date +"%Y%m%d_%H%M%S"`
     fi
 }
 
+backup_and_makelink(){
+    backup_file $2
+    ln -sfv $1 $2
+}
+
+setup_bash() {
+    check_command_exists bash
+    backup_and_makelink $curdir/.bashrc $home/.bashrc
+}
+
 setup_vim(){
-    setup_git_repo git://github.com/spf13/spf13-vim.git ~/.spf13 "3.0"
+    local_dir=$home/.spf13-vim-3
+    setup_git_repo git://github.com/spf13/spf13-vim.git $local_dir "3.0"
+    let flag=1
     if [ $? -eq 0 ]; then
-        bash ~/.spf13/bootstrap.sh
-        ln ./.gvimrc        ~/.gvimrc
-        ln ./.vimrc.local   ~/.vimrc.local
-        ln ./.vimrc.bundles.local ~/.vimrc.bundles.local
+        let flag=0
+    fi
+    
+    if [ $? -eq 1 ]; then
+        let flag=0
+    fi
+
+    if [ $flag -eq 0 ]; then
+        bash $local_dir/bootstrap.sh
+        backup_and_makelink $curdir/.gvimrc              $home/.gvimrc
+        backup_and_makelink $curdir/.vimrc.local         $home/.vimrc.local
+        backup_and_makelink $curdir/.vimrc.before.local  $home/.vimrc.before.local
+        backup_and_makelink $curdir/.vimrc.bundles.local $home/.vimrc.bundles.local
     fi
 }
 
 # setup_vundle(){
-#    mkdir -p ~/.vim/bundle
-#    setup_git_repo git://github.com/gmarik/vundle.git ~/.vim/bundle/Vundle.vim
+#    mkdir -p $home/.vim/bundle
+#    setup_git_repo git://github.com/gmarik/vundle.git $home/.vim/bundle/Vundle.vim
 # }
 
 setup_zsh(){
     check_command_exists zsh
-    setup_git_repo git://github.com/robbyrussell/oh-my-zsh.git ~/.oh-my-zsh
+    setup_git_repo git://github.com/robbyrussell/oh-my-zsh.git $home/.oh-my-zsh
     if [ $? -eq 0 ]; then
-        cp ~/.oh-my-zsh/templates/zshrc.zsh-template ~/.zshrc
+        cp $home/.oh-my-zsh/templates/zshrc.zsh-template $home/.zshrc
     fi
     # chsh -s /bin/zsh
 }
 
 setup_archlinux(){
-    setup_git_repo git://github.com/helmuthdu/aui.git ~/.aui
-    info "see \"cd ~/.aui\""
+    setup_git_repo git://github.com/helmuthdu/aui.git $home/.aui
+    info "see \"cd $home/.aui\""
 }
 
 setup_goagent(){
-    setup_git_repo git://github.com/goagent/goagent.git  ~/goagent
+    setup_git_repo git://github.com/goagent/goagent.git  $home/goagent
 }
 
 setup_python(){
@@ -102,16 +126,36 @@ setup_python(){
 
 setup_git(){
     check_command_exists git
-    ln ./.gitconfig ~/.gitconfig
+    git config --global user.name       cupen
+    git config --global user.email      cupen@foxmail.com
+    git config --global push.default    current
+}
+
+setup_fonts(){
+    check_command_exists mkfontscale
+    check_command_exists mkfontdir
+    check_command_exists sudo
+
+    setup_git_repo git@github.com:Lokaltog/powerline-fonts.git $home/.fonts
+
+    localDir="/usr/share/fonts/TTF/powerline"
+    sudo mkdir -p $localDir
+    sudo cp -r ~/.fonts/* $localDir
+    # sudo fc-cache -vf $localDir
+    # sudo mkfontscale $localDir
+    # sudo mkfontdir $localDir
+
+    wget -q https://github.com/Lokaltog/powerline/raw/develop/font/10-powerline-symbols.conf
+    mkdir -p $home/.config/fontconfig/conf.d/
+    mv 10-powerline-symbols.conf $home/.config/fontconfig/conf.d/
 }
 
 setup_conky(){
-    ln ./.conkyrc ~/.conkyrc
+    backup_and_makelink $curdir/.conkyrc $home/.conkyrc
 }
 
-show_menu () {
+show_menu(){
     echo "==========================="
-    local $menuItems=$1
     let index=0
     for item in ${menuItems[@]}; do
         echo $index". Run "$item
@@ -124,14 +168,13 @@ show_menu () {
 }
 
 choices_menu(){
-    local $menuItems=$1
     let isContinue=1
     while (( isContinue )); do
         clear
-        show_menu menuItems
+        show_menu
         echo "You can choice one or more like \"1 3 5 7 9\""
         read choices
-        for choice in $choices ; do
+        for choice in $choices; do
             case "$choice" in
             'a')
                 echo "All!!!"
@@ -139,6 +182,7 @@ choices_menu(){
                     echo "Running "$item
                     $item
                 done
+                echo ========= FINISHED ===========
                 read
                 ;;
 
@@ -156,6 +200,7 @@ choices_menu(){
                     echo "Choiced "$choice
                     $cmd
                 fi
+                echo ========= FINISHED ===========
                 read
                 ;;
             esac
@@ -171,8 +216,9 @@ main(){
         setup_archlinux
         setup_goagent
         setup_zsh
+        setup_fonts
     )
-    choices_menu menuItems
+    choices_menu $menuItems
 }
 
 main
