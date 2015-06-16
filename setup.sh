@@ -108,7 +108,8 @@ setup_zsh(){
     if [ $? -eq 0 ]; then
         cp $home/.oh-my-zsh/templates/zshrc.zsh-template $home/.zshrc
     fi
-    # chsh -s /bin/zsh
+    chsh -s /bin/zsh
+    backup_and_makelink $curdir/.zshrc              $home/.zshrc
 }
 
 setup_archlinux(){
@@ -141,9 +142,9 @@ setup_fonts(){
     localDir="/usr/share/fonts/TTF/powerline"
     sudo mkdir -p $localDir
     sudo cp -r ~/.fonts/* $localDir
-    # sudo fc-cache -vf $localDir
-    # sudo mkfontscale $localDir
-    # sudo mkfontdir $localDir
+    sudo fc-cache -vf $localDir
+    sudo mkfontscale $localDir
+    sudo mkfontdir $localDir
 
     wget -q https://github.com/Lokaltog/powerline/raw/develop/font/10-powerline-symbols.conf
     mkdir -p $home/.config/fontconfig/conf.d/
