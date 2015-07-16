@@ -24,7 +24,10 @@ nnoremap <space> @=((foldclosed(line('.')) < 0) ? 'zc':'zo')<CR>  " 折叠开/�
 if has("gui_running")
     set columns=128
     set lines=32
+else
+    set t_Co=256
 endif
+
 
 " 共享系统剪贴板（yank的时候同时存储到剪贴板中）。
 set clipboard+=unnamed
@@ -80,8 +83,8 @@ let g:ctrlp_funky_php_requires            = 1
 
 
 " keymap
-vmap <tab> >gv
-vmap <s-tab> <gv
+vnoremap <tab> >gv
+vnoremap <s-tab> <gv
 nnoremap <c-a> ggVG
 
 
