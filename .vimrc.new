@@ -137,14 +137,43 @@ NeoBundle 'ctrlpvim/ctrlp.vim', { 'depends': 'tacahiroy/ctrlp-funky' } "{{{
     endif
 
 NeoBundle 'drmingdrmer/xptemplate'
+" NeoBundle 'ap/vim-buftabline' "{{{
+"    set hidden
+"    nnoremap <C-N> :bnext<CR>
+"    nnoremap <C-P> :bprev<CR>
+"}}}
+NeoBundle 'bling/vim-bufferline'
 NeoBundle 'bling/vim-airline' "{{{
     let g:airline#extensions#tabline#enabled = 1
+    " old vim-powerline symbols
+    let g:airline_left_sep = '⮀'
+    let g:airline_left_alt_sep = '⮁'
+    let g:airline_right_sep = '⮂'
+    let g:airline_right_alt_sep = '⮃'
+    let g:airline_symbols = {}
+    let g:airline_symbols.branch = '⭠'
+    let g:airline_symbols.readonly = '⭤'
+    let g:airline_symbols.linenr = '⭡'
+    let g:airline#extensions#bufferline#enabled = 1
+    let g:airline#extensions#tabline#enableed = 1
 "}}}
+NeoBundle 'airblade/vim-gitgutter'
 NeoBundle 'scrooloose/syntastic' "{{{
     let g:syntastic_c_checkers = ['gcc']
     let g:syntastic_c_check_header = 1
     let g:syntastic_c_compiler = 'gcc'
     let g:syntastic_c_auto_refresh_includes = 1
+    let g:syntastic_always_populate_loc_list = 1
+    let g:syntastic_auto_loc_list = 1
+    let g:syntastic_check_on_open = 1
+    let g:syntastic_check_on_wq = 1
+"}}}
+NeoBundle 'nathanaelkane/vim-indent-guides' "{{{
+    if s:is_gui
+        hi IndentGuidesOdd ctermbg=black
+        hi IndentGuidesEven ctermbg=darkgrey
+    endif
+
 "}}}
 
 NeoBundleLazy 'majutsushi/tagbar', {'autoload':{'commands':'TagbarToggle'}} "{{{
@@ -182,11 +211,12 @@ NeoBundleLazy 'scrooloose/nerdtree', {'autoload':{'commands':['NERDTreeToggle','
     let NERDTreeShowLineNumbers=1
     let NERDTreeChDirMode=0
     let NERDTreeShowBookmarks=1
-    let NERDTreeIgnore=['\.git','\.hg']
+    let NERDTreeIgnore=['^.git$','^.hg$', '^.svn$']
     let NERDTreeBookmarksFile=s:get_dir('nerdtree') . 'NERDTreeBookmarks'
-    nnoremap <F2> :NERDTreeToggle<CR>
-    nnoremap <F3> :NERDTreeFind<CR>
+    " 退出所有buffer时间自动关闭nerd https://github.com/scrooloose/nerdtree/issues/21
+    autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTreeType") && b:NERDTreeType == "primary") | q | endif
 "}}}
+NeoBundle 'Xuyuanp/nerdtree-git-plugin'
 
 NeoBundle 'easymotion/vim-easymotion' "{{{
     map <Leader> <Plug>(easymotion-prefix)
@@ -284,6 +314,7 @@ if executable('ag')
     set grepformat=%f:%l:%c:%m
 endif
 
+" 记录上次编辑的位置
 if has("autocmd")
     au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g'\"" | endif
 endif
@@ -298,9 +329,16 @@ nnoremap <c-a> ggVG
 
 nnoremap <Leader>fu :CtrlPFunky<CR>
 nnoremap <Leader>fU :execute 'CtrlPFunky ' . expand('<cword>')<CR>
+
+nnoremap <silent> <F2> :NERDTreeToggle<CR>
+nnoremap <silent> <F3> :NERDTreeFind<CR>
 nnoremap <silent> <F9> :TagbarToggle<CR>
+nnoremap <silent> <F1> :GitGutterToggle<CR>
+
+nnoremap <c-h> :bN<CR>
+nnoremap <c-l> :bn<CR>
+
 
 " nnoremap <C-p> :Unite file_rec/async<cr>
-nnoremap <C-p> :CtrlP<cr>
+nnoremap <c-p> :CtrlP<cr>
 nnoremap <space> @=((foldclosed(line('.')) < 0) ? 'zc':'zo')<CR>  " 折叠开/关
-

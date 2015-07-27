@@ -82,6 +82,11 @@ source $ZSH/oh-my-zsh.sh
 # Example aliases
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
+alias apt-get="sudo apt-get"
+alias apt-cache="sudo apt-cache"
+alias visudo="sudo visudo"
+alias rm='rm -i'
+alias tmux='tmux -2'
 
 # bind key
 bindkey '[1~'   beginning-of-line  # Linux console

@@ -25,7 +25,6 @@ upgrade_git_repo() {
 }
 
 clone_git_repo(){
-    info "Trying to clone git repo: $1"
 
     url=${1?"Missing a paramer:url"}
     dir=${2=""}
@@ -35,6 +34,9 @@ clone_git_repo(){
     else
         git clone --progress --depth=1 --single-branch $url $dir || error "git clone returned "$?
     fi
+
+    echo 1
+
 }
 
 ##
