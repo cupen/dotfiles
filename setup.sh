@@ -35,6 +35,9 @@ clone_git_repo(){
     else
         git clone --progress --depth=1 --single-branch $url $dir || error "git clone returned "$?
     fi
+
+    echo 1
+
 }
 
 ##
@@ -78,7 +81,7 @@ setup_bash() {
 
 setup_vim(){
     local_dir=$home/.spf13-vim-3
-    # setup_git_repo git://github.com/spf13/spf13-vim.git $local_dir "3.0"
+    setup_git_repo git://github.com/spf13/spf13-vim.git $local_dir "3.0"
     let flag=1
     if [ $? -eq 0 ]; then
         let flag=0
@@ -89,7 +92,7 @@ setup_vim(){
     fi
 
     if [ $flag -eq 0 ]; then
-        # bash $local_dir/bootstrap.sh
+        bash $local_dir/bootstrap.sh
         backup_and_makelink $curdir/.gvimrc              $home/.gvimrc
         backup_and_makelink $curdir/.vimrc.local         $home/.vimrc.local
         backup_and_makelink $curdir/.vimrc.before.local  $home/.vimrc.before.local
@@ -108,7 +111,8 @@ setup_zsh(){
     if [ $? -eq 0 ]; then
         cp $home/.oh-my-zsh/templates/zshrc.zsh-template $home/.zshrc
     fi
-    # chsh -s /bin/zsh
+    chsh -s /bin/zsh
+    backup_and_makelink $curdir/.zshrc              $home/.zshrc
 }
 
 setup_archlinux(){
@@ -141,9 +145,9 @@ setup_fonts(){
     localDir="/usr/share/fonts/TTF/powerline"
     sudo mkdir -p $localDir
     sudo cp -r ~/.fonts/* $localDir
-    # sudo fc-cache -vf $localDir
-    # sudo mkfontscale $localDir
-    # sudo mkfontdir $localDir
+    sudo fc-cache -vf $localDir
+    sudo mkfontscale $localDir
+    sudo mkfontdir $localDir
 
     wget -q https://github.com/Lokaltog/powerline/raw/develop/font/10-powerline-symbols.conf
     mkdir -p $home/.config/fontconfig/conf.d/

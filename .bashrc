@@ -661,5 +661,4 @@ _isroot=false
 #}}}
 
 export PS4='+${BASH_SOURCE}:${LINENO}:${FUNCNAME[0]}: '
-
-
+LC_ALL=zh_CN.UTF-8
