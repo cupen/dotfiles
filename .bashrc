@@ -135,6 +135,7 @@ _isroot=false
   export PATH=/usr/local/bin:$PATH
   export PATH=/home/cupen/.cabal/bin:$PATH
   export PATH=/home/cupen/bin:$PATH
+  export PATH=/home/cupen/.nimble/bin:$PATH
   export PATH=.:$PATH
   export _JAVA_OPTIONS='-Dswing.defaultlaf=com.sun.java.swing.plaf.gtk.GTKLookAndFeel'
   #Ruby support

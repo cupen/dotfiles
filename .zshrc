@@ -82,11 +82,18 @@ source $ZSH/oh-my-zsh.sh
 # Example aliases
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
+#
+#
+export PATH=/home/cupen/Nim/bin:$PATH
+
+alias apt="sudo apt"
 alias apt-get="sudo apt-get"
 alias apt-cache="sudo apt-cache"
 alias visudo="sudo visudo"
 alias rm='rm -i'
 alias tmux='tmux -2'
+alias pip="sudo -H pip"
+alias pip3="sudo -H pip3"
 
 # bind key
 bindkey '[1~'   beginning-of-line  # Linux console
