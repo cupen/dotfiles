@@ -1,0 +1,280 @@
+let s:is_windows = has('win32') || has('win64')
+let s:is_cygwin = has('win32unix')
+let s:is_gui = has("gui_running")
+
+let s:config = {}
+let s:config.language=['c', 'python', 'rust', 'html']
+let s:config.language=[]
+
+" {{{ diy functions
+function! s:get_dir(dirname, ...)
+    let dirpath=expand('~/.vim/' . a:dirname . '/')
+        if !isdirectory(expand(dirpath))
+            call mkdir(expand(dirpath))
+        endif
+    return dirpath
+endfunction 
+
+function! s:choose_color_scheme(name)
+    if a:name == 'molokai'
+        colorscheme molokai
+    elseif a:name == 'monokai'
+        colorscheme monokai
+    endif
+endfunction 
+" }}}
+" {{{ filetype define
+autocmd BufNewFile,BufReadPost *.md set filetype=markdown
+autocmd BufNewFile,BufReadPost *.puml set filetype=plantuml
+filetype plugin indent on
+" }}}
+" basic {{{
+set cursorline
+set cursorcolumn
+let mapleader = ','
+set tabstop=4
+set shiftwidth=4
+set nospell
+set wrap
+set number
+set nocompatible               " Be iMproved
+"}}}
+" encodings {{{
+set encoding=utf-8
+set termencoding=utf-8
+set fileencoding=utf-8
+set fileencodings=ucs-bom,utf-8,cp936,gb18030,big5,euc-jp,euc-kr,latin1
+language messages zh_CN.UTF-8
+"}}}
+" fold {{{
+set foldmethod=marker
+" set foldmethod=syntax
+set foldcolumn=0
+setlocal foldlevel=0
+set foldclose=all " 自动关闭折叠
+"}}}
+" 插件  {{{
+call plug#begin('~/.vim/plugged')
+"{{{ 缩进
+Plug 'nathanaelkane/vim-indent-guides'
+if s:is_gui
+    hi IndentGuidesOdd ctermbg=black
+    hi IndentGuidesEven ctermbg=darkgrey
+endif
+"}}}
+"{{{ 自动补全
+Plug 'Shougo/neocomplete.vim', {'autoload':{'insert':1} }
+    let g:acp_enableAtStartup = 0
+    let g:neocomplete#enable_smart_case = 1
+    let g:neocomplete#sources#syntax#min_keyword_length = 3
+    let g:neocomplete#enable_at_startup=1
+    let g:neocomplete#data_directory=s:get_dir('neocomplete')
+    if !exists('g:neocomplete#keyword_patterns')
+        let g:neocomplete#keyword_patterns = {}
+    endif
+    let g:neocomplete#keyword_patterns['default'] = '\h\w*'
+    " Enable omni completion.
+    autocmd FileType css setlocal omnifunc=csscomplete#CompleteCSS
+    autocmd FileType html,markdown setlocal omnifunc=htmlcomplete#CompleteTags
+    autocmd FileType javascript setlocal omnifunc=javascriptcomplete#CompleteJS
+    autocmd FileType python setlocal omnifunc=pythoncomplete#Complete
+    autocmd FileType xml setlocal omnifunc=xmlcomplete#CompleteTags
+"}}}
+"{{{ 快速定位/搜索
+Plug 'easymotion/vim-easymotion'
+map <Leader> <Plug>(easymotion-prefix)
+
+Plug 'Shougo/unite.vim'
+    let g:unite_data_directory=s:get_dir('unite')
+    let g:unite_source_history_yank_enable=1
+    let g:unite_source_rec_max_cache_files=5000
+
+    if executable('ag')
+        let g:unite_source_grep_command='ag'
+        let g:unite_source_grep_default_opts='--nocolor --line-numbers --nogroup -S -C4'
+        let g:unite_source_grep_recursive_opt=''
+    elseif executable('ack')
+        let g:unite_source_grep_command='ack'
+        let g:unite_source_grep_default_opts='--no-heading --no-color -C4'
+        let g:unite_source_grep_recursive_opt=''
+    endif
+
+Plug 'h1mesuke/unite-outline'
+"}}}
+"{{{ 状态栏
+Plug 'bling/vim-airline'
+    let g:airline#extensions#tabline#enabled = 1
+    " old vim-powerline symbols
+    let g:airline_left_sep = '⮀'
+    let g:airline_left_alt_sep = '⮁'
+    let g:airline_right_sep = '⮂'
+    let g:airline_right_alt_sep = '⮃'
+    let g:airline_symbols = {}
+    let g:airline_symbols.branch = '⭠'
+    let g:airline_symbols.readonly = '⭤'
+    let g:airline_symbols.linenr = '⭡'
+    let g:airline#extensions#bufferline#enabled = 1
+    let g:airline#extensions#tabline#enableed = 1
+Plug 'bling/vim-bufferline'
+"}}}
+"{{{ misc
+Plug 'airblade/vim-gitgutter'
+"}}}
+Plug 'majutsushi/tagbar', {'autoload':{'commands':'TagbarToggle'}} "{{{
+nnoremap <silent> <F9> :TagbarToggle<CR>
+"}}}
+Plug 'scrooloose/nerdtree', {'on':['NERDTreeToggle','NERDTreeFind']} "{{{
+    let NERDTreeShowHidden=1
+    let NERDTreeQuitOnOpen=0
+    let NERDTreeShowLineNumbers=1
+    let NERDTreeChDirMode=0
+    let NERDTreeShowBookmarks=1
+    let NERDTreeIgnore=['^.git$','^.hg$', '^.svn$']
+    let NERDTreeBookmarksFile=s:get_dir('nerdtree') . 'NERDTreeBookmarks'
+    " 退出所有buffer时间自动关闭nerd https://github.com/scrooloose/nerdtree/issues/21
+    autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTreeType") && b:NERDTreeType == "primary") | q | endif
+Plug 'Xuyuanp/nerdtree-git-plugin', {'on':['NERDTreeToggle','NERDTreeFind']} 
+"}}}
+if count(s:config.language, 'python') "{{{
+endif
+"}}}
+if count(s:config.language, 'basic') "{{{
+    Plug 'reedes/vim-wheel'
+    Plug 'junegunn/goyo.vim', { 'for': 'markdown' }
+    autocmd! User goyo.vim echom 'Goyo is now loaded!'
+endif "}}}
+if count(s:config.language, 'javascript') "{{{
+endif "}}}
+if count(s:config.language, 'c') "{{{
+
+endif "}}}
+if count(s:config.language, 'java') "{{{
+endif "}}}
+if count(s:config.language, 'rust') "{{{
+    Plug 'rust-lang/rust.vim', { 'for': 'rust' }
+endif "}}}
+" if count(s:config.language, 'nim') "{{{
+" Plug "baabelfish/nvim-nim"
+" endif "}}}
+if count(s:config.language, 'html') "{{{
+    Plug 'amirh/HTML-AutoCloseTag'
+endif "}}}
+" Plug "aklt/plantuml-syntax", { 'for': ['platuml', 'puml'] }
+
+Plug 'tomasr/molokai' "{{{
+    let g:rehash256 = 1
+"}}}
+call plug#end()
+syntax enable
+"}}}
+"{{{ 共享系统剪贴板（yank的时候同时存储到剪贴板中）。 
+if has('unnamedplus')  " When possible use + register for copy-paste
+  set clipboard=unnamed,unnamedplus
+else         " On mac and Windows, use * register for copy-paste
+  set clipboard=unnamed
+endif
+"}}}
+" whitespace {{{
+set backspace=indent,eol,start                      "allow backspacing everything in insert mode
+set autoindent                                      "automatically indent to match adjacent lines
+set expandtab                                       "spaces instead of tabs
+set smarttab                                        "use shiftwidth to enter tabs
+let &tabstop=4              "number of spaces per tab for display
+let &softtabstop=4          "number of spaces per tab in insert mode
+let &shiftwidth=4           "number of spaces when indenting
+set list                                            "highlight whitespace
+set listchars=tab:│\ ,trail:•,extends:❯,precedes:❮
+set shiftround
+set linebreak
+let &showbreak='↪ '
+"}}}
+" searching {{{
+set hlsearch                                        "highlight searches
+set incsearch                                       "incremental searching
+set ignorecase                                      "ignore case for searching
+set smartcase                                       "do case-sensitive if there's a capital letter
+if executable('ack')
+    set grepprg=ack\ --nogroup\ --column\ --smart-case\ --nocolor\ --follow\ $*
+    set grepformat=%f:%l:%c:%m
+endif
+if executable('ag')
+    set grepprg=ag\ --nogroup\ --column\ --smart-case\ --nocolor\ --follow
+    set grepformat=%f:%l:%c:%m
+endif
+"}}}
+" key bindings {{{
+map <C-J> <C-W>j<C-W>_
+map <C-K> <C-W>k<C-W>_
+map <C-L> <C-W>l<C-W>_
+map <C-H> <C-W>h<C-W>_
+
+nmap <leader>f0 :set foldlevel=0<cr>
+nmap <leader>f1 :set foldlevel=1<cr>
+nmap <leader>f2 :set foldlevel=2<cr>
+nmap <leader>f3 :set foldlevel=3<cr>
+nmap <leader>f4 :set foldlevel=4<cr>
+nmap <leader>f5 :set foldlevel=5<cr>
+nmap <leader>f6 :set foldlevel=6<cr>
+nmap <leader>f7 :set foldlevel=7<cr>
+nmap <leader>f8 :set foldlevel=8<cr>
+nmap <leader>f9 :set foldlevel=9<cr>
+
+" Wrapped lines goes down/up to next row, rather than next line in file.
+noremap j gj
+noremap k gk
+
+" 记录上次编辑的位置
+if has("autocmd")
+    au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g'\"" | endif
+endif
+
+inoremap <expr><TAB> pumvisible() ? "\<c-n>" : "\<TAB>"
+inoremap <expr><S-TAB> pumvisible() ? "\<c-p>" : "\<S-TAB>"
+
+vnoremap <tab> >gv
+vnoremap <s-tab> <gv
+nnoremap <c-a> ggVG
+
+nnoremap <silent> <F2> :NERDTreeToggle<cr>
+nnoremap <silent> <F3> :NERDTreeFind<cr>
+nnoremap <silent> <F9> :TagbarToggle<cr>
+nnoremap <silent> <F1> :GitGutterToggle<cr>
+
+nnoremap <c-h> :bN<cr>
+nnoremap <c-l> :bn<cr>
+
+" nnoremap <C-p> :Unite file_rec/async<cr>
+nnoremap <silent> <c-p> :CtrlP<cr>
+nnoremap <silent> <Leader>fu :CtrlPFunky<cr>
+nnoremap <silent> <Leader>fU :execute 'CtrlPFunky ' . expand('<cword>')<cr>
+
+nnoremap <space> @=((foldclosed(line('.')) < 0) ? 'zc':'zo')<cr>  " 折叠开/关
+"}}}
+" gui {{{
+if s:is_gui
+    " set width&height
+    set columns=128
+    set lines=32
+
+    " F2键切换显示/隐藏菜单栏、工具栏。
+    " @see http://liyanrui.is-programmer.com/articles/1791/gvim-menu-and-toolbar-toggle.html
+    set guioptions-=m
+    set guioptions-=T
+    map <silent> <F4> :if &guioptions =~# 'T' <Bar>
+            \set guioptions-=T <Bar>
+            \set guioptions-=m <bar>
+        \else <Bar>
+            \set guioptions+=T <Bar>
+            \set guioptions+=m <Bar>
+        \endif<CR>
+endif
+" }}}
+" terminal {{{
+if !s:is_gui
+    set t_Co=256
+endif
+" }}}
+
+" set background=dark
+call s:choose_color_scheme('molokai')
+
