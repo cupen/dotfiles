@@ -3,10 +3,10 @@ let s:is_cygwin = has('win32unix')
 let s:is_gui = has("gui_running")
 
 let s:config = {}
-let s:config.language=['c', 'python', 'rust', 'html']
-let s:config.language=[]
+let s:config.language=['c', 'python', 'nim', 'rust', 'html', 'others']
+let s:config.language=['others']
 
-" {{{ diy functions
+" {{{ Functions
 function! s:get_dir(dirname, ...)
     let dirpath=expand('~/.vim/' . a:dirname . '/')
         if !isdirectory(expand(dirpath))
@@ -23,12 +23,12 @@ function! s:choose_color_scheme(name)
     endif
 endfunction 
 " }}}
-" {{{ filetype define
+" {{{ Filetype defines
 autocmd BufNewFile,BufReadPost *.md set filetype=markdown
 autocmd BufNewFile,BufReadPost *.puml set filetype=plantuml
 filetype plugin indent on
 " }}}
-" basic {{{
+" Basic {{{
 set cursorline
 set cursorcolumn
 let mapleader = ','
@@ -37,23 +37,35 @@ set shiftwidth=4
 set nospell
 set wrap
 set number
-set nocompatible               " Be iMproved
+set nocompatible
+
+" 记录上次编辑的位置
+if has("autocmd")
+    au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g'\"" | endif
+endif
+
+" 共享系统剪贴板（yank的时候同时存储到剪贴板中）。 
+if has('unnamedplus')  " When possible use + register for copy-paste
+  set clipboard=unnamed,unnamedplus
+else         " On mac and Windows, use * register for copy-paste
+  set clipboard=unnamed
+endif
 "}}}
-" encodings {{{
+" Encodings {{{
 set encoding=utf-8
 set termencoding=utf-8
 set fileencoding=utf-8
 set fileencodings=ucs-bom,utf-8,cp936,gb18030,big5,euc-jp,euc-kr,latin1
 language messages zh_CN.UTF-8
 "}}}
-" fold {{{
+" Fold {{{
 set foldmethod=marker
 " set foldmethod=syntax
 set foldcolumn=0
 setlocal foldlevel=0
 set foldclose=all " 自动关闭折叠
 "}}}
-" 插件  {{{
+" Plugins  {{{
 call plug#begin('~/.vim/plugged')
 "{{{ 缩进
 Plug 'nathanaelkane/vim-indent-guides'
@@ -62,23 +74,9 @@ if s:is_gui
     hi IndentGuidesEven ctermbg=darkgrey
 endif
 "}}}
-"{{{ 自动补全
-Plug 'Shougo/neocomplete.vim', {'autoload':{'insert':1} }
-    let g:acp_enableAtStartup = 0
-    let g:neocomplete#enable_smart_case = 1
-    let g:neocomplete#sources#syntax#min_keyword_length = 3
-    let g:neocomplete#enable_at_startup=1
-    let g:neocomplete#data_directory=s:get_dir('neocomplete')
-    if !exists('g:neocomplete#keyword_patterns')
-        let g:neocomplete#keyword_patterns = {}
-    endif
-    let g:neocomplete#keyword_patterns['default'] = '\h\w*'
-    " Enable omni completion.
-    autocmd FileType css setlocal omnifunc=csscomplete#CompleteCSS
-    autocmd FileType html,markdown setlocal omnifunc=htmlcomplete#CompleteTags
-    autocmd FileType javascript setlocal omnifunc=javascriptcomplete#CompleteJS
-    autocmd FileType python setlocal omnifunc=pythoncomplete#Complete
-    autocmd FileType xml setlocal omnifunc=xmlcomplete#CompleteTags
+" {{{ 自动补全
+" Plug 'Valloric/YouCompleteMe', { 'do': './install.py' }
+Plug 'ajh17/VimCompletesMe'
 "}}}
 "{{{ 快速定位/搜索
 Plug 'easymotion/vim-easymotion'
@@ -102,27 +100,21 @@ Plug 'Shougo/unite.vim'
 Plug 'h1mesuke/unite-outline'
 "}}}
 "{{{ 状态栏
-Plug 'bling/vim-airline'
-    let g:airline#extensions#tabline#enabled = 1
-    " old vim-powerline symbols
-    let g:airline_left_sep = '⮀'
-    let g:airline_left_alt_sep = '⮁'
-    let g:airline_right_sep = '⮂'
-    let g:airline_right_alt_sep = '⮃'
-    let g:airline_symbols = {}
-    let g:airline_symbols.branch = '⭠'
-    let g:airline_symbols.readonly = '⭤'
-    let g:airline_symbols.linenr = '⭡'
-    let g:airline#extensions#bufferline#enabled = 1
-    let g:airline#extensions#tabline#enableed = 1
+Plug 'vim-airline/vim-airline'
+Plug 'vim-airline/vim-airline-themes'
 Plug 'bling/vim-bufferline'
+let g:airline#extensions#bufferline#enabled = 1
+let g:airline#extensions#tabline#enabled = 0
+let g:airline_theme='murmur'   " @see https://github.com/vim-airline/vim-airline/wiki/Screenshots
+
 "}}}
 "{{{ misc
+Plug 'w0rp/ale'
+" let g:ale_sign_error = '>>'
+" let g:ale_sign_warning = '--'
+
 Plug 'airblade/vim-gitgutter'
-"}}}
-Plug 'majutsushi/tagbar', {'autoload':{'commands':'TagbarToggle'}} "{{{
-nnoremap <silent> <F9> :TagbarToggle<CR>
-"}}}
+Plug 'majutsushi/tagbar', {'on': 'TagbarToggle' }
 Plug 'scrooloose/nerdtree', {'on':['NERDTreeToggle','NERDTreeFind']} "{{{
     let NERDTreeShowHidden=1
     let NERDTreeQuitOnOpen=0
@@ -135,14 +127,16 @@ Plug 'scrooloose/nerdtree', {'on':['NERDTreeToggle','NERDTreeFind']} "{{{
     autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTreeType") && b:NERDTreeType == "primary") | q | endif
 Plug 'Xuyuanp/nerdtree-git-plugin', {'on':['NERDTreeToggle','NERDTreeFind']} 
 "}}}
+
+"}}}
+if count(s:config.language, 'others') "{{{
+    Plug 'reedes/vim-wheel'
+    Plug 'tpope/vim-markdown', { 'for': 'markdown' }
+    Plug 'aklt/plantuml-syntax', { 'for': 'platuml' }
+endif "}}}
 if count(s:config.language, 'python') "{{{
 endif
 "}}}
-if count(s:config.language, 'basic') "{{{
-    Plug 'reedes/vim-wheel'
-    Plug 'junegunn/goyo.vim', { 'for': 'markdown' }
-    autocmd! User goyo.vim echom 'Goyo is now loaded!'
-endif "}}}
 if count(s:config.language, 'javascript') "{{{
 endif "}}}
 if count(s:config.language, 'c') "{{{
@@ -159,7 +153,6 @@ endif "}}}
 if count(s:config.language, 'html') "{{{
     Plug 'amirh/HTML-AutoCloseTag'
 endif "}}}
-" Plug "aklt/plantuml-syntax", { 'for': ['platuml', 'puml'] }
 
 Plug 'tomasr/molokai' "{{{
     let g:rehash256 = 1
@@ -167,14 +160,7 @@ Plug 'tomasr/molokai' "{{{
 call plug#end()
 syntax enable
 "}}}
-"{{{ 共享系统剪贴板（yank的时候同时存储到剪贴板中）。 
-if has('unnamedplus')  " When possible use + register for copy-paste
-  set clipboard=unnamed,unnamedplus
-else         " On mac and Windows, use * register for copy-paste
-  set clipboard=unnamed
-endif
-"}}}
-" whitespace {{{
+" Whitespace {{{
 set backspace=indent,eol,start                      "allow backspacing everything in insert mode
 set autoindent                                      "automatically indent to match adjacent lines
 set expandtab                                       "spaces instead of tabs
@@ -188,7 +174,7 @@ set shiftround
 set linebreak
 let &showbreak='↪ '
 "}}}
-" searching {{{
+" Searching {{{
 set hlsearch                                        "highlight searches
 set incsearch                                       "incremental searching
 set ignorecase                                      "ignore case for searching
@@ -202,7 +188,7 @@ if executable('ag')
     set grepformat=%f:%l:%c:%m
 endif
 "}}}
-" key bindings {{{
+" Key bindings {{{
 map <C-J> <C-W>j<C-W>_
 map <C-K> <C-W>k<C-W>_
 map <C-L> <C-W>l<C-W>_
@@ -223,11 +209,6 @@ nmap <leader>f9 :set foldlevel=9<cr>
 noremap j gj
 noremap k gk
 
-" 记录上次编辑的位置
-if has("autocmd")
-    au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g'\"" | endif
-endif
-
 inoremap <expr><TAB> pumvisible() ? "\<c-n>" : "\<TAB>"
 inoremap <expr><S-TAB> pumvisible() ? "\<c-p>" : "\<S-TAB>"
 
@@ -243,20 +224,26 @@ nnoremap <silent> <F1> :GitGutterToggle<cr>
 nnoremap <c-h> :bN<cr>
 nnoremap <c-l> :bn<cr>
 
-" nnoremap <C-p> :Unite file_rec/async<cr>
-nnoremap <silent> <c-p> :CtrlP<cr>
+nnoremap <silent> <c-p> :Unite file_rec<cr>
+" nnoremap <silent> <c-p> :Unite -start-insert file_rec/async<cr>
+" nnoremap <silent> <c-p> :CtrlP<cr>
 nnoremap <silent> <Leader>fu :CtrlPFunky<cr>
 nnoremap <silent> <Leader>fU :execute 'CtrlPFunky ' . expand('<cword>')<cr>
 
 nnoremap <space> @=((foldclosed(line('.')) < 0) ? 'zc':'zo')<cr>  " 折叠开/关
 "}}}
-" gui {{{
+" Terminal {{{
+if !s:is_gui
+    set t_Co=256
+endif
+" }}}
+" GUI {{{
 if s:is_gui
     " set width&height
     set columns=128
     set lines=32
 
-    " F2键切换显示/隐藏菜单栏、工具栏。
+    " F4键切换显示/隐藏菜单栏、工具栏。
     " @see http://liyanrui.is-programmer.com/articles/1791/gvim-menu-and-toolbar-toggle.html
     set guioptions-=m
     set guioptions-=T
@@ -267,11 +254,6 @@ if s:is_gui
             \set guioptions+=T <Bar>
             \set guioptions+=m <Bar>
         \endif<CR>
-endif
-" }}}
-" terminal {{{
-if !s:is_gui
-    set t_Co=256
 endif
 " }}}
 

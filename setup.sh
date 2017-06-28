@@ -80,24 +80,11 @@ setup_bash() {
 }
 
 setup_vim(){
-    local_dir=$home/.spf13-vim-3
-    setup_git_repo git://github.com/spf13/spf13-vim.git $local_dir "3.0"
-    let flag=1
-    if [ $? -eq 0 ]; then
-        let flag=0
-    fi
+    local plug_src=https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+    curl -fLo ~/.vim/autoload/plug.vim --create-dirs $plug_src
     
-    if [ $? -eq 1 ]; then
-        let flag=0
-    fi
-
-    if [ $flag -eq 0 ]; then
-        bash $local_dir/bootstrap.sh
-        backup_and_makelink $curdir/.gvimrc              $home/.gvimrc
-        backup_and_makelink $curdir/.vimrc.local         $home/.vimrc.local
-        backup_and_makelink $curdir/.vimrc.before.local  $home/.vimrc.before.local
-        backup_and_makelink $curdir/.vimrc.bundles.local $home/.vimrc.bundles.local
-    fi
+    backup_and_makelink $curdir/.gvimrc  $home/.gvimrc
+    backup_and_makelink $curdir/.vimrc   $home/.vimrc
 }
 
 # setup_vundle(){
