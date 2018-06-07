@@ -84,7 +84,12 @@ source $ZSH/oh-my-zsh.sh
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 #
 #
-export PATH=/home/cupen/Nim/bin:$PATH
+
+export GOROOT=/usr/local/opt/go-1.10.1
+export NIM_HOME=/usr/local/opt/nim
+
+export PATH=$PATH:$GOROOT/bin
+export PATH=$PATH:$NIM_HOME/bin
 
 alias apt="sudo apt"
 alias apt-get="sudo apt-get"

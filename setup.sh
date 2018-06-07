@@ -118,7 +118,7 @@ setup_python(){
 setup_git(){
     check_command_exists git
     git config --global user.name       cupen
-    git config --global user.email      cupen@foxmail.com
+    git config --global user.email      xcupen@gmail.com
     git config --global push.default    current
 }
 

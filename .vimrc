@@ -3,8 +3,8 @@ let s:is_cygwin = has('win32unix')
 let s:is_gui = has("gui_running")
 
 let s:config = {}
-let s:config.language=['c', 'python', 'nim', 'rust', 'html', 'others']
-let s:config.language=['others']
+let s:config.language=['c', 'python', 'nim', 'rust', 'html', 'javascript', 'go', 'others']
+let s:config.language=['others', 'c', 'python', 'go']
 
 " {{{ Functions
 function! s:get_dir(dirname, ...)
@@ -76,13 +76,15 @@ endif
 "}}}
 " {{{ 自动补全
 " Plug 'Valloric/YouCompleteMe', { 'do': './install.py' }
-Plug 'ajh17/VimCompletesMe'
+" Plug 'ajh17/VimCompletesMe'
 "}}}
 "{{{ 快速定位/搜索
 Plug 'easymotion/vim-easymotion'
 map <Leader> <Plug>(easymotion-prefix)
 
+Plug 'Shougo/vimproc.vim', {'do' : 'make'}
 Plug 'Shougo/unite.vim'
+    let g:unite_prompt='>> '
     let g:unite_data_directory=s:get_dir('unite')
     let g:unite_source_history_yank_enable=1
     let g:unite_source_rec_max_cache_files=5000
@@ -103,18 +105,48 @@ Plug 'h1mesuke/unite-outline'
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
 Plug 'bling/vim-bufferline'
+let g:airline_powerline_fonts=1
 let g:airline#extensions#bufferline#enabled = 1
 let g:airline#extensions#tabline#enabled = 0
 let g:airline_theme='murmur'   " @see https://github.com/vim-airline/vim-airline/wiki/Screenshots
 
 "}}}
-"{{{ misc
+" LSP {{{
+Plug 'prabirshrestha/async.vim'
+Plug 'prabirshrestha/vim-lsp'
+Plug 'prabirshrestha/asyncomplete.vim'
+Plug 'prabirshrestha/asyncomplete-lsp.vim'
+let g:lsp_async_completion = 1
+if executable('clangd')
+    au User lsp_setup call lsp#register_server({
+        \ 'name': 'clangd',
+        \ 'cmd': {server_info->['clangd']},
+        \ 'whitelist': ['c', 'cpp', 'objc', 'objcpp'],
+        \ })
+endif
+
+if executable('pyls')
+    au User lsp_setup call lsp#register_server({
+        \ 'name': 'pyls',
+        \ 'cmd': {server_info->['pyls']},
+        \ 'whitelist': ['python'],
+        \ })
+endif
+
+" }}}
+"{{{ basic
 Plug 'w0rp/ale'
+"Plug 'idanarye/vim-vebugger'
 " let g:ale_sign_error = '>>'
 " let g:ale_sign_warning = '--'
 
 Plug 'airblade/vim-gitgutter'
-Plug 'majutsushi/tagbar', {'on': 'TagbarToggle' }
+" Plug 'majutsushi/tagbar', {'on': 'TagbarToggle' }
+Plug 'majutsushi/tagbar'
+Plug 'godlygeek/tabular'
+" Plug 'othree/eregex.vim'
+" let g:eregex_default_enable = 1
+
 Plug 'scrooloose/nerdtree', {'on':['NERDTreeToggle','NERDTreeFind']} "{{{
     let NERDTreeShowHidden=1
     let NERDTreeQuitOnOpen=0
@@ -138,6 +170,8 @@ if count(s:config.language, 'python') "{{{
 endif
 "}}}
 if count(s:config.language, 'javascript') "{{{
+    Plug 'HerringtonDarkholme/yats.vim'
+    Plug 'ryanolsonx/vim-lsp-typescript'
 endif "}}}
 if count(s:config.language, 'c') "{{{
 
@@ -151,8 +185,20 @@ endif "}}}
 " Plug "baabelfish/nvim-nim"
 " endif "}}}
 if count(s:config.language, 'html') "{{{
-    Plug 'amirh/HTML-AutoCloseTag'
+    Plug 'vim-scripts/HTML-AutoCloseTag'
 endif "}}}
+if count(s:config.language, 'go') "{{{
+    Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }
+    if executable('go-langserver')
+        au User lsp_setup call lsp#register_server({
+            \ 'name': 'go-langserver',
+            \ 'cmd': {server_info->['go-langserver', '-mode', 'stdio']},
+            \ 'whitelist': ['go'],
+            \ })
+    endif
+endif "}}}
+
+
 
 Plug 'tomasr/molokai' "{{{
     let g:rehash256 = 1
@@ -205,7 +251,6 @@ nmap <leader>f7 :set foldlevel=7<cr>
 nmap <leader>f8 :set foldlevel=8<cr>
 nmap <leader>f9 :set foldlevel=9<cr>
 
-" Wrapped lines goes down/up to next row, rather than next line in file.
 noremap j gj
 noremap k gk
 
@@ -224,8 +269,11 @@ nnoremap <silent> <F1> :GitGutterToggle<cr>
 nnoremap <c-h> :bN<cr>
 nnoremap <c-l> :bn<cr>
 
-nnoremap <silent> <c-p> :Unite file_rec<cr>
-" nnoremap <silent> <c-p> :Unite -start-insert file_rec/async<cr>
+" nnoremap <silent> <c-p> :Unite file_rec<cr>
+nnoremap <silent> <c-p> :Unite -start-insert file_rec/async<cr>
+nnoremap <silent> <c-g> :Unite grep:.<cr>
+nnoremap <space>s :Unite -quick-match buffer<cr>
+nnoremap <space>y :Unite history/yank<cr>
 " nnoremap <silent> <c-p> :CtrlP<cr>
 nnoremap <silent> <Leader>fu :CtrlPFunky<cr>
 nnoremap <silent> <Leader>fU :execute 'CtrlPFunky ' . expand('<cword>')<cr>
@@ -254,9 +302,24 @@ if s:is_gui
             \set guioptions+=T <Bar>
             \set guioptions+=m <Bar>
         \endif<CR>
+
+    " 解决菜单乱码
+    source $VIMRUNTIME/delmenu.vim
+    source $VIMRUNTIME/menu.vim
+    
+    " 设置字体
+    set guifont=Source_Code_Pro_Medium:h9
 endif
 " }}}
 
 " set background=dark
 call s:choose_color_scheme('molokai')
 
+let g:tagbar_type_markdown = {
+    \ 'ctagstype' : 'markdown',
+    \ 'kinds' : [
+        \ 'h:Heading_L1',
+        \ 'i:Heading_L2',
+        \ 'k:Heading_L3'
+    \ ]
+\ }
