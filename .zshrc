@@ -52,10 +52,10 @@ ZSH_THEME="linuxonly"
 plugins=(git)
 
 # User configuration
-
 export PATH=$HOME/bin:/usr/local/bin:$PATH
 # export MANPATH="/usr/local/man:$MANPATH"
 
+[ -f $HOME/.zshrc.local ] && source $HOME/.zshrc.local
 source $ZSH/oh-my-zsh.sh
 
 # You may need to manually set your language environment
@@ -83,13 +83,16 @@ source $ZSH/oh-my-zsh.sh
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 #
-#
 
-export GOROOT=/usr/local/opt/go-1.10.1
-export NIM_HOME=/usr/local/opt/nim
+# for pyspark 
+# @see https://gist.github.com/tommycarpi/f5a67c66a8f2170e263c#link-spark-with-ipython-notebook
+export PARK_PYTHON=python3
+export PYSPARK_DRIVER_PYTHON=ipython
+export PYSPARK_DRIVER_PYTHON_OPTS="notebook"
 
+# for path
 export PATH=$PATH:$GOROOT/bin
-export PATH=$PATH:$NIM_HOME/bin
+
 
 alias apt="sudo apt"
 alias apt-get="sudo apt-get"
