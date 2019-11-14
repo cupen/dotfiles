@@ -1,0 +1,23 @@
+[user]
+	name = cupen
+	email = xcupen@gmail.com
+
+[push]
+	default = current
+
+[url "ssh://git@github.com/"]
+	insteadOf = https://github.com/
+
+[diff "ansible-vault"]
+	textconv = ansible-vault view
+	# Do not cache the vault contents
+	cachetextconv = false
+
+[merge "ansible-vault"]
+	name = ansible-vault merge driver
+	driver = /usr/local/bin/ansible-vault-merge -- %O %A %B %P
+
+
+[alias]
+	graph = log --graph --date-order -C -M --pretty=format:\"<%h> %ad [%an] %Cgreen%d%Creset %s\" --all --date=short
+

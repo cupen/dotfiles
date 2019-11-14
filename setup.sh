@@ -117,9 +117,10 @@ setup_python(){
 
 setup_git(){
     check_command_exists git
-    git config --global user.name       cupen
-    git config --global user.email      xcupen@gmail.com
-    git config --global push.default    current
+    ln -s .gitconfig  $home/.gitconfig
+    # git config --global user.name       cupen
+    # git config --global user.email      xcupen@gmail.com
+    # git config --global push.default    current
 }
 
 setup_fonts(){
