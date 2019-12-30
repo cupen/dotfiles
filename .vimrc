@@ -116,20 +116,14 @@ Plug 'prabirshrestha/async.vim'
 Plug 'prabirshrestha/vim-lsp'
 Plug 'prabirshrestha/asyncomplete.vim'
 Plug 'prabirshrestha/asyncomplete-lsp.vim'
+Plug 'ryanolsonx/vim-lsp-python'
 let g:lsp_async_completion = 1
+
 if executable('clangd')
     au User lsp_setup call lsp#register_server({
         \ 'name': 'clangd',
-        \ 'cmd': {server_info->['clangd']},
+        \ 'cmd': {server_info->['clangd', '-background-index']},
         \ 'whitelist': ['c', 'cpp', 'objc', 'objcpp'],
-        \ })
-endif
-
-if executable('pyls')
-    au User lsp_setup call lsp#register_server({
-        \ 'name': 'pyls',
-        \ 'cmd': {server_info->['pyls']},
-        \ 'whitelist': ['python'],
         \ })
 endif
 
@@ -163,6 +157,7 @@ Plug 'Xuyuanp/nerdtree-git-plugin', {'on':['NERDTreeToggle','NERDTreeFind']}
 "}}}
 if count(s:config.language, 'others') "{{{
     Plug 'reedes/vim-wheel'
+    Plug 'cespare/vim-toml'
     Plug 'tpope/vim-markdown', { 'for': 'markdown' }
     Plug 'aklt/plantuml-syntax', { 'for': 'platuml' }
 endif "}}}
@@ -308,7 +303,7 @@ if s:is_gui
     source $VIMRUNTIME/menu.vim
     
     " 设置字体
-    set guifont=Source_Code_Pro_Medium:h9
+    " set guifont=Source_Code_Pro_Medium:h9
 endif
 " }}}
 

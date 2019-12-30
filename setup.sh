@@ -74,6 +74,16 @@ backup_and_makelink(){
     ln -sfv $1 $2
 }
 
+link_dir(){
+    echo "link dir: $1 -> $2"
+    ln -s $1 $2
+}
+
+link_file(){
+    echo "link file: $1 -> $2"
+    ln -sfv $1 $2
+}
+
 setup_bash() {
     check_command_exists bash
     backup_and_makelink $curdir/.bashrc $home/.bashrc
@@ -85,6 +95,15 @@ setup_vim(){
     
     backup_and_makelink $curdir/.gvimrc  $home/.gvimrc
     backup_and_makelink $curdir/.vimrc   $home/.vimrc
+}
+
+setup_nvim(){
+    local plug_src=https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+    curl -fLo ~/.vim/autoload/plug.vim --create-dirs $plug_src
+    
+    local config_dir=$home/.config
+    mkdir -p  $config_dir
+    link_dir $curdir/config/nvim $config_dir/nvim
 }
 
 # setup_vundle(){
@@ -204,6 +223,7 @@ main(){
     declare -a menuItems=(
         setup_git
         setup_vim
+        setup_nvim
         setup_bash
         setup_archlinux
         setup_goagent

@@ -84,24 +84,33 @@ source $ZSH/oh-my-zsh.sh
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 #
 
-# for pyspark 
+# vim
+export EDITOR=vim
+
+# pyspark 
 # @see https://gist.github.com/tommycarpi/f5a67c66a8f2170e263c#link-spark-with-ipython-notebook
 export PARK_PYTHON=python3
 export PYSPARK_DRIVER_PYTHON=ipython
 export PYSPARK_DRIVER_PYTHON_OPTS="notebook"
 
-# for path
+# etcd
+export ETCDCTL_API=3
+
+# path
 export PATH=$PATH:$GOROOT/bin
+export PATH=$PATH:$HOME/.local/bin
 
-
+# aliases
 alias apt="sudo apt"
 alias apt-get="sudo apt-get"
 alias apt-cache="sudo apt-cache"
 alias visudo="sudo visudo"
 alias rm='rm -i'
+alias vi='vim'
 alias tmux='tmux -2'
-alias pip="sudo -H pip"
-alias pip3="sudo -H pip3"
+alias docker='sudo docker'
+alias xclip='xclip -selection clipboard'
+
 
 # bind key
 bindkey '[1~'   beginning-of-line  # Linux console
