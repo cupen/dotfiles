@@ -17,7 +17,13 @@
 	name = ansible-vault merge driver
 	driver = /usr/local/bin/ansible-vault-merge -- %O %A %B %P
 
+[diff "words"]
+	textconv=echo 
+	# Do not cache the vault contents
+	cachetextconv = false
 
 [alias]
 	graph = log --graph --date-order -C -M --pretty=format:\"<%h> %ad [%an] %Cgreen%d%Creset %s\" --all --date=short
 
+[core]
+	quotepath = false

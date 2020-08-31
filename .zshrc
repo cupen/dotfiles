@@ -49,7 +49,7 @@ ZSH_THEME="linuxonly"
 # Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(git)
+plugins=(git z)
 
 # User configuration
 export PATH=$HOME/bin:/usr/local/bin:$PATH
@@ -97,7 +97,8 @@ export PYSPARK_DRIVER_PYTHON_OPTS="notebook"
 export ETCDCTL_API=3
 
 # path
-export PATH=$PATH:$GOROOT/bin
+export PATH=$PATH:/usr/local/bin
+export PATH=$PATH:$GOROOT/bin:$GOPATH/bin
 export PATH=$PATH:$HOME/.local/bin
 
 # aliases

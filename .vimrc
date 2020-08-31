@@ -67,39 +67,63 @@ set foldclose=all " 自动关闭折叠
 "}}}
 " Plugins  {{{
 call plug#begin('~/.vim/plugged')
-"{{{ 缩进
+"{{{ Indent
 Plug 'nathanaelkane/vim-indent-guides'
 if s:is_gui
     hi IndentGuidesOdd ctermbg=black
     hi IndentGuidesEven ctermbg=darkgrey
 endif
 "}}}
-" {{{ 自动补全
+" {{{ AutoCompletion
 " Plug 'Valloric/YouCompleteMe', { 'do': './install.py' }
 " Plug 'ajh17/VimCompletesMe'
+Plug 'ncm2/ncm2'
+Plug 'ncm2/ncm2-bufword'
+Plug 'ncm2/ncm2-path'
+Plug 'ncm2/ncm2-pyclang'
+Plug 'ncm2/ncm2-vim-lsp'
+Plug 'ncm2/ncm2-ultisnips'
+Plug 'ncm2/ncm2-go'
+Plug 'SirVer/ultisnips'
+
+inoremap <silent> <expr> <CR> ncm2_ultisnips#expand_or("\<CR>", 'n')
+
+" c-j c-k for moving in snippet
+" let g:UltiSnipsExpandTrigger		= "<Plug>(ultisnips_expand)"
+let g:UltiSnipsJumpForwardTrigger	= "<c-j>"
+let g:UltiSnipsJumpBackwardTrigger	= "<c-k>"
+let g:UltiSnipsRemoveSelectModeMappings = 0
 "}}}
-"{{{ 快速定位/搜索
+"{{{ FuzzySearch/Motion
 Plug 'easymotion/vim-easymotion'
 map <Leader> <Plug>(easymotion-prefix)
 
-Plug 'Shougo/vimproc.vim', {'do' : 'make'}
 Plug 'Shougo/unite.vim'
-    let g:unite_prompt='>> '
-    let g:unite_data_directory=s:get_dir('unite')
-    let g:unite_source_history_yank_enable=1
-    let g:unite_source_rec_max_cache_files=5000
+if has('nvim')
+  Plug 'Shougo/denite.nvim', { 'do': ':UpdateRemotePlugins' }
+else
+  Plug 'Shougo/denite.nvim'
+  Plug 'roxma/nvim-yarp'
+  Plug 'roxma/vim-hug-neovim-rpc'
+endif
+" pip3 install --user msgpack pynvim
+" Define mappings
+autocmd FileType denite call s:denite_settings()
+function! s:denite_settings() abort
+  nnoremap <silent><buffer><expr> <CR>
+  \ denite#do_map('do_action')
+  nnoremap <silent><buffer><expr> d
+  \ denite#do_map('do_action', 'delete')
+  nnoremap <silent><buffer><expr> p
+  \ denite#do_map('do_action', 'preview')
+  nnoremap <silent><buffer><expr> q
+  \ denite#do_map('quit')
+  nnoremap <silent><buffer><expr> i
+  \ denite#do_map('open_filter_buffer')
+  nnoremap <silent><buffer><expr> <Space>
+  \ denite#do_map('toggle_select').'j'
+endfunction
 
-    if executable('ag')
-        let g:unite_source_grep_command='ag'
-        let g:unite_source_grep_default_opts='--nocolor --line-numbers --nogroup -S -C4'
-        let g:unite_source_grep_recursive_opt=''
-    elseif executable('ack')
-        let g:unite_source_grep_command='ack'
-        let g:unite_source_grep_default_opts='--no-heading --no-color -C4'
-        let g:unite_source_grep_recursive_opt=''
-    endif
-
-Plug 'h1mesuke/unite-outline'
 "}}}
 "{{{ 状态栏
 Plug 'vim-airline/vim-airline'
@@ -116,7 +140,6 @@ Plug 'prabirshrestha/async.vim'
 Plug 'prabirshrestha/vim-lsp'
 Plug 'prabirshrestha/asyncomplete.vim'
 Plug 'prabirshrestha/asyncomplete-lsp.vim'
-Plug 'ryanolsonx/vim-lsp-python'
 let g:lsp_async_completion = 1
 
 if executable('clangd')
@@ -127,21 +150,44 @@ if executable('clangd')
         \ })
 endif
 
+if executable('go-langserver')
+    au User lsp_setup call lsp#register_server({
+        \ 'name': 'go-langserver',
+        \ 'cmd': {server_info->['go-langserver', '-gocodecompletion']},
+        \ 'whitelist': ['go'],
+        \ })
+    autocmd BufWritePre *.go LspDocumentFormatSync
+endif
+
 " }}}
-"{{{ basic
+" {{{ ColorSchema
+Plug 'sickill/vim-monokai'
+Plug 'tomasr/molokai'
+    let g:rehash256 = 1
+" }}}
+"{{{ Basic
 Plug 'w0rp/ale'
 "Plug 'idanarye/vim-vebugger'
 " let g:ale_sign_error = '>>'
 " let g:ale_sign_warning = '--'
 
 Plug 'airblade/vim-gitgutter'
-" Plug 'majutsushi/tagbar', {'on': 'TagbarToggle' }
-Plug 'majutsushi/tagbar'
+Plug 'majutsushi/tagbar', {'on': 'TagbarToggle' }
+"Plug 'majutsushi/tagbar'
+    let g:tagbar_type_markdown = {
+        \ 'ctagstype' : 'markdown',
+        \ 'kinds' : [
+            \ 'h:Heading_L1',
+            \ 'i:Heading_L2',
+            \ 'k:Heading_L3'
+        \ ]
+    \ }
+
 Plug 'godlygeek/tabular'
 " Plug 'othree/eregex.vim'
 " let g:eregex_default_enable = 1
 
-Plug 'scrooloose/nerdtree', {'on':['NERDTreeToggle','NERDTreeFind']} "{{{
+Plug 'scrooloose/nerdtree', {'on':['NERDTreeToggle','NERDTreeFind']}
     let NERDTreeShowHidden=1
     let NERDTreeQuitOnOpen=0
     let NERDTreeShowLineNumbers=1
@@ -152,7 +198,7 @@ Plug 'scrooloose/nerdtree', {'on':['NERDTreeToggle','NERDTreeFind']} "{{{
     " 退出所有buffer时间自动关闭nerd https://github.com/scrooloose/nerdtree/issues/21
     autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTreeType") && b:NERDTreeType == "primary") | q | endif
 Plug 'Xuyuanp/nerdtree-git-plugin', {'on':['NERDTreeToggle','NERDTreeFind']} 
-"}}}
+
 
 "}}}
 if count(s:config.language, 'others') "{{{
@@ -162,6 +208,7 @@ if count(s:config.language, 'others') "{{{
     Plug 'aklt/plantuml-syntax', { 'for': 'platuml' }
 endif "}}}
 if count(s:config.language, 'python') "{{{
+Plug 'ryanolsonx/vim-lsp-python'
 endif
 "}}}
 if count(s:config.language, 'javascript') "{{{
@@ -184,20 +231,15 @@ if count(s:config.language, 'html') "{{{
 endif "}}}
 if count(s:config.language, 'go') "{{{
     Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }
-    if executable('go-langserver')
-        au User lsp_setup call lsp#register_server({
-            \ 'name': 'go-langserver',
-            \ 'cmd': {server_info->['go-langserver', '-mode', 'stdio']},
-            \ 'whitelist': ['go'],
-            \ })
-    endif
+    "if executable('go-langserver')
+    "    au User lsp_setup call lsp#register_server({
+    "        \ 'name': 'go-langserver',
+    "        \ 'cmd': {server_info->['go-langserver', '-mode', 'stdio']},
+    "        \ 'whitelist': ['go'],
+    "        \ })
+    "endif
 endif "}}}
 
-
-
-Plug 'tomasr/molokai' "{{{
-    let g:rehash256 = 1
-"}}}
 call plug#end()
 syntax enable
 "}}}
@@ -229,7 +271,7 @@ if executable('ag')
     set grepformat=%f:%l:%c:%m
 endif
 "}}}
-" Key bindings {{{
+" Key Maps {{{
 map <C-J> <C-W>j<C-W>_
 map <C-K> <C-W>k<C-W>_
 map <C-L> <C-W>l<C-W>_
@@ -264,14 +306,15 @@ nnoremap <silent> <F1> :GitGutterToggle<cr>
 nnoremap <c-h> :bN<cr>
 nnoremap <c-l> :bn<cr>
 
-" nnoremap <silent> <c-p> :Unite file_rec<cr>
-nnoremap <silent> <c-p> :Unite -start-insert file_rec/async<cr>
-nnoremap <silent> <c-g> :Unite grep:.<cr>
-nnoremap <space>s :Unite -quick-match buffer<cr>
-nnoremap <space>y :Unite history/yank<cr>
+nnoremap <silent> <c-p> :Denite file/rec<cr>
+vnoremap <silent> <c-b> :Denite buffer<cr>
+" nnoremap <silent> <c-p> :Unite -start-insert file_rec/async<cr>
+" nnoremap <silent> <c-g> :Unite grep:.<cr>
+" nnoremap <space>s :Unite -quick-match buffer<cr>
+" nnoremap <space>y :Unite history/yank<cr>
 " nnoremap <silent> <c-p> :CtrlP<cr>
-nnoremap <silent> <Leader>fu :CtrlPFunky<cr>
-nnoremap <silent> <Leader>fU :execute 'CtrlPFunky ' . expand('<cword>')<cr>
+" nnoremap <silent> <Leader>fu :CtrlPFunky<cr>
+" nnoremap <silent> <Leader>fU :execute 'CtrlPFunky ' . expand('<cword>')<cr>
 
 nnoremap <space> @=((foldclosed(line('.')) < 0) ? 'zc':'zo')<cr>  " 折叠开/关
 "}}}
@@ -308,13 +351,5 @@ endif
 " }}}
 
 " set background=dark
-call s:choose_color_scheme('molokai')
-
-let g:tagbar_type_markdown = {
-    \ 'ctagstype' : 'markdown',
-    \ 'kinds' : [
-        \ 'h:Heading_L1',
-        \ 'i:Heading_L2',
-        \ 'k:Heading_L3'
-    \ ]
-\ }
+" call s:choose_color_scheme('monokai')
+colorscheme molokai
