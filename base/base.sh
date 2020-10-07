@@ -48,9 +48,10 @@ error() {
     # exit 1
 }
 
-check_command_exists() {
+require_cmd() {
     type $1 >/dev/null 2>&1
     if [ $? -eq 1 ]; then
-        error ${2-"Please install '$1' first."}
+        echo "$2 install '$1' first."
+        exit 1
     fi
 }

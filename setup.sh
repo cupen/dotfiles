@@ -85,12 +85,10 @@ link_file(){
 }
 
 setup_bash() {
-    check_command_exists bash
     backup_and_makelink $curdir/.bashrc $home/.bashrc
 }
 
 setup_vim(){
-    check_command_exists bash
     local plug_src=https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
     mkdir -p  ~/.vim
     curl -fLo ~/.vim/autoload/plug.vim --create-dirs $plug_src
@@ -100,7 +98,6 @@ setup_vim(){
 }
 
 setup_nvim(){
-    check_command_exists bash
     local plug_src=https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
     mkdir -p  ~/.vim
     curl -fLo ~/.vim/autoload/plug.vim --create-dirs $plug_src
@@ -116,7 +113,7 @@ setup_nvim(){
 # }
 
 setup_zsh(){
-    check_command_exists zsh
+    require_cmd zsh
     setup_git_repo git://github.com/ohmyzsh/ohmyzsh/.git $home/.oh-my-zsh
     if [ $? -eq 0 ]; then
         cp $home/.oh-my-zsh/templates/zshrc.zsh-template $home/.zshrc
@@ -135,21 +132,19 @@ setup_goagent(){
 }
 
 setup_python(){
-    check_command_exists python
+    require_cmd python
 }
 
 setup_git(){
-    check_command_exists git
     git config --global user.name       cupen
     git config --global user.email      xcupen@gmail.com
     git config --global push.default    current
 }
 
 setup_fonts(){
-    check_command_exists mkfontscale
-    check_command_exists mkfontdir
-    check_command_exists sudo
-
+    require_cmd mkfontscale
+    require_cmd mkfontdir
+    require_cmd sudo
     setup_git_repo git@github.com:Lokaltog/powerline-fonts.git $home/.fonts
 
     localDir="/usr/share/fonts/TTF/powerline"
@@ -222,9 +217,6 @@ choices_menu(){
     done
 }
 
-check_command_exists curl
-check_command_exists git
-check_command_exists bash
 
 main(){
     declare -a menuItems=(
@@ -240,4 +232,8 @@ main(){
     choices_menu $menuItems
 }
 
+
+require_cmd bash
+require_cmd curl
+require_cmd git
 main
