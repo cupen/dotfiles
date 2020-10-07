@@ -90,7 +90,9 @@ setup_bash() {
 }
 
 setup_vim(){
+    check_command_exists bash
     local plug_src=https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+    mkdir -p  ~/.vim
     curl -fLo ~/.vim/autoload/plug.vim --create-dirs $plug_src
     
     backup_and_makelink $curdir/.gvimrc  $home/.gvimrc
@@ -98,7 +100,9 @@ setup_vim(){
 }
 
 setup_nvim(){
+    check_command_exists bash
     local plug_src=https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+    mkdir -p  ~/.vim
     curl -fLo ~/.vim/autoload/plug.vim --create-dirs $plug_src
     
     local config_dir=$home/.config
@@ -113,7 +117,7 @@ setup_nvim(){
 
 setup_zsh(){
     check_command_exists zsh
-    setup_git_repo git://github.com/robbyrussell/oh-my-zsh.git $home/.oh-my-zsh
+    setup_git_repo git://github.com/ohmyzsh/ohmyzsh/.git $home/.oh-my-zsh
     if [ $? -eq 0 ]; then
         cp $home/.oh-my-zsh/templates/zshrc.zsh-template $home/.zshrc
     fi
@@ -136,10 +140,9 @@ setup_python(){
 
 setup_git(){
     check_command_exists git
-    ln -s .gitconfig  $home/.gitconfig
-    # git config --global user.name       cupen
-    # git config --global user.email      xcupen@gmail.com
-    # git config --global push.default    current
+    git config --global user.name       cupen
+    git config --global user.email      xcupen@gmail.com
+    git config --global push.default    current
 }
 
 setup_fonts(){
@@ -218,6 +221,10 @@ choices_menu(){
         done
     done
 }
+
+check_command_exists curl
+check_command_exists git
+check_command_exists bash
 
 main(){
     declare -a menuItems=(

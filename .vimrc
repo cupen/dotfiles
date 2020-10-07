@@ -3,8 +3,8 @@ let s:is_cygwin = has('win32unix')
 let s:is_gui = has("gui_running")
 
 let s:config = {}
-let s:config.language=['c', 'python', 'nim', 'rust', 'html', 'javascript', 'go', 'others']
-let s:config.language=['others', 'c', 'python', 'go']
+let s:config.uses=['c', 'python', 'nim', 'rust', 'html', 'javascript', 'go', 'others']
+let s:config.uses=['others', 'c', 'python', 'go', 'wsl']
 
 " {{{ Functions
 function! s:get_dir(dirname, ...)
@@ -50,6 +50,20 @@ if has('unnamedplus')  " When possible use + register for copy-paste
 else         " On mac and Windows, use * register for copy-paste
   set clipboard=unnamed
 endif
+
+"@see https://github.com/microsoft/WSL/issues/4440#issuecomment-638884035 
+if count(s:config.uses, 'wsl')
+    " WSL yank support
+    let s:clip = '/mnt/c/Windows/System32/clip.exe'  " change this path according to your mount point
+    if executable(s:clip)
+        augroup WSLYank
+            autocmd!
+            autocmd TextYankPost * if v:event.operator ==# 'y' | call system(s:clip, @0) | endif
+        augroup END
+    endif
+endif
+
+
 "}}}
 " Encodings {{{
 set encoding=utf-8
@@ -201,36 +215,36 @@ Plug 'Xuyuanp/nerdtree-git-plugin', {'on':['NERDTreeToggle','NERDTreeFind']}
 
 
 "}}}
-if count(s:config.language, 'others') "{{{
-    Plug 'reedes/vim-wheel'
-    Plug 'cespare/vim-toml'
-    Plug 'tpope/vim-markdown', { 'for': 'markdown' }
-    Plug 'aklt/plantuml-syntax', { 'for': 'platuml' }
+if count(s:config.uses, 'others') "{{{
+Plug 'reedes/vim-wheel'
+Plug 'cespare/vim-toml'
+Plug 'tpope/vim-markdown', { 'for': 'markdown' }
+Plug 'aklt/plantuml-syntax', { 'for': 'platuml' }
 endif "}}}
-if count(s:config.language, 'python') "{{{
+if count(s:config.uses, 'python') "{{{
 Plug 'ryanolsonx/vim-lsp-python'
 endif
 "}}}
-if count(s:config.language, 'javascript') "{{{
-    Plug 'HerringtonDarkholme/yats.vim'
-    Plug 'ryanolsonx/vim-lsp-typescript'
+if count(s:config.uses, 'javascript') "{{{
+Plug 'HerringtonDarkholme/yats.vim'
+Plug 'ryanolsonx/vim-lsp-typescript'
 endif "}}}
-if count(s:config.language, 'c') "{{{
+if count(s:config.uses, 'c') "{{{
 
 endif "}}}
-if count(s:config.language, 'java') "{{{
+if count(s:config.uses, 'java') "{{{
 endif "}}}
-if count(s:config.language, 'rust') "{{{
-    Plug 'rust-lang/rust.vim', { 'for': 'rust' }
+if count(s:config.uses, 'rust') "{{{
+Plug 'rust-lang/rust.vim', { 'for': 'rust' }
 endif "}}}
-" if count(s:config.language, 'nim') "{{{
-" Plug "baabelfish/nvim-nim"
-" endif "}}}
-if count(s:config.language, 'html') "{{{
-    Plug 'vim-scripts/HTML-AutoCloseTag'
+if count(s:config.uses, 'nim') "{{{
+Plug 'baabelfish/nvim-nim'
 endif "}}}
-if count(s:config.language, 'go') "{{{
-    Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }
+if count(s:config.uses, 'html') "{{{
+Plug 'vim-scripts/HTML-AutoCloseTag'
+endif "}}}
+if count(s:config.uses, 'go') "{{{
+Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }
     "if executable('go-langserver')
     "    au User lsp_setup call lsp#register_server({
     "        \ 'name': 'go-langserver',
@@ -306,7 +320,7 @@ nnoremap <silent> <F1> :GitGutterToggle<cr>
 nnoremap <c-h> :bN<cr>
 nnoremap <c-l> :bn<cr>
 
-nnoremap <silent> <c-p> :Denite file/rec<cr>
+nnoremap <silent> <c-p> :Denite file/rec -start-filter<cr>
 vnoremap <silent> <c-b> :Denite buffer<cr>
 " nnoremap <silent> <c-p> :Unite -start-insert file_rec/async<cr>
 " nnoremap <silent> <c-g> :Unite grep:.<cr>
