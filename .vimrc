@@ -2,9 +2,14 @@ let s:is_windows = has('win32') || has('win64')
 let s:is_cygwin = has('win32unix')
 let s:is_gui = has("gui_running")
 
-let s:config = {}
-let s:config.uses=['c', 'python', 'nim', 'rust', 'html', 'javascript', 'go', 'others']
-let s:config.uses=['others', 'c', 'python', 'go', 'wsl']
+let g:config = {}
+let g:config.uses=['c', 'python', 'nim', 'rust', 'html', 'javascript', 'go', 'c#', 'others']
+let g:config.uses=['others', 'c', 'python', 'go', 'wsl']
+" Load uses {{{
+    if filereadable(expand("~/.vimrc.local"))
+        source ~/.vimrc.local
+    endif
+" }}}
 
 " {{{ Functions
 function! s:get_dir(dirname, ...)
@@ -52,7 +57,7 @@ else         " On mac and Windows, use * register for copy-paste
 endif
 
 "@see https://github.com/microsoft/WSL/issues/4440#issuecomment-638884035 
-if count(s:config.uses, 'wsl')
+if count(g:config.uses, 'wsl')
     " WSL yank support
     let s:clip = '/mnt/c/Windows/System32/clip.exe'  " change this path according to your mount point
     if executable(s:clip)
@@ -139,7 +144,7 @@ function! s:denite_settings() abort
 endfunction
 
 "}}}
-"{{{ 状态栏
+"{{{ Status Bar
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
 Plug 'bling/vim-bufferline'
@@ -164,10 +169,13 @@ if executable('clangd')
         \ })
 endif
 
-if executable('go-langserver')
+" GO111MODULE=on go get golang.org/x/tools/gopls@latest
+" https://github.com/golang/tools/tree/master/gopls
+" https://github.com/prabirshrestha/vim-lsp/wiki/Servers-Go
+if executable('gopls')
     au User lsp_setup call lsp#register_server({
-        \ 'name': 'go-langserver',
-        \ 'cmd': {server_info->['go-langserver', '-gocodecompletion']},
+        \ 'name': 'gopls',
+        \ 'cmd': {server_info->['gopls']},
         \ 'whitelist': ['go'],
         \ })
     autocmd BufWritePre *.go LspDocumentFormatSync
@@ -215,35 +223,36 @@ Plug 'Xuyuanp/nerdtree-git-plugin', {'on':['NERDTreeToggle','NERDTreeFind']}
 
 
 "}}}
-if count(s:config.uses, 'others') "{{{
+if count(g:config.uses, 'others') "{{{
 Plug 'reedes/vim-wheel'
 Plug 'cespare/vim-toml'
 Plug 'tpope/vim-markdown', { 'for': 'markdown' }
 Plug 'aklt/plantuml-syntax', { 'for': 'platuml' }
 endif "}}}
-if count(s:config.uses, 'python') "{{{
+if count(g:config.uses, 'python') "{{{
 Plug 'ryanolsonx/vim-lsp-python'
+" pip install python-language-server
 endif
 "}}}
-if count(s:config.uses, 'javascript') "{{{
+if count(g:config.uses, 'javascript') "{{{
 Plug 'HerringtonDarkholme/yats.vim'
 Plug 'ryanolsonx/vim-lsp-typescript'
 endif "}}}
-if count(s:config.uses, 'c') "{{{
+if count(g:config.uses, 'c') "{{{
 
 endif "}}}
-if count(s:config.uses, 'java') "{{{
+if count(g:config.uses, 'java') "{{{
 endif "}}}
-if count(s:config.uses, 'rust') "{{{
+if count(g:config.uses, 'rust') "{{{
 Plug 'rust-lang/rust.vim', { 'for': 'rust' }
 endif "}}}
-if count(s:config.uses, 'nim') "{{{
+if count(g:config.uses, 'nim') "{{{
 Plug 'baabelfish/nvim-nim'
 endif "}}}
-if count(s:config.uses, 'html') "{{{
+if count(g:config.uses, 'html') "{{{
 Plug 'vim-scripts/HTML-AutoCloseTag'
 endif "}}}
-if count(s:config.uses, 'go') "{{{
+if count(g:config.uses, 'go') "{{{
 Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }
     "if executable('go-langserver')
     "    au User lsp_setup call lsp#register_server({
@@ -253,7 +262,10 @@ Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }
     "        \ })
     "endif
 endif "}}}
-
+if count(g:config.uses, 'c#') "{{{
+Plug 'OmniSharp/omnisharp-vim'
+let g:OmniSharp_server_stdio = 1
+endif "}}}
 call plug#end()
 syntax enable
 "}}}
@@ -321,6 +333,7 @@ nnoremap <c-h> :bN<cr>
 nnoremap <c-l> :bn<cr>
 
 nnoremap <silent> <c-p> :Denite file/rec -start-filter<cr>
+" nnoremap <silent> <c-p> :Denite file/rec -match-highlight -start-filter<cr>
 vnoremap <silent> <c-b> :Denite buffer<cr>
 " nnoremap <silent> <c-p> :Unite -start-insert file_rec/async<cr>
 " nnoremap <silent> <c-g> :Unite grep:.<cr>
