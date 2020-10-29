@@ -1,15 +1,7 @@
 #!/usr/bin/env bash
+#set -euo pipefail
 
-
-let DEBUG=0
-
-DEBUG(){
-    if [ "$DEBUG" = "true" ]; then
-        $@　　
-    fi
-}
-
-print_color_test(){
+print_color_test() {
     for STYLE in 0 1 2 3 4 5 6 7; do
         for FG in 30 31 32 33 34 35 36 37; do
             for BG in 40 41 42 43 44 45 46 47; do
@@ -26,7 +18,7 @@ print_color_test(){
     echo -e "\033[0m"
 }
 
-print_color(){
+print_color() {
     CTRL="\033[${1};${2};${3}m"
     echo -en "${CTRL}"
     echo -n "${4}"
@@ -37,21 +29,23 @@ msg() {
     echo -e "$1" >&2
 }
 
+debug() {
+    print_color 1 33 40 $1
+}
+
 info() {
-    print_color 4 36 40 $1
+    print_color 1 36 40 $1
 }
 
 error() {
-    localText="An error in function \"${FUNCNAME[$i+1]}\" on line ${BASH_LINENO[$i+1]}"
-    print_color 7 31 40 ${localText}
-    print_color 7 31 40 $1$2
-    # exit 1
+    local line="ERROR:${FUNCNAME[$i+1]}:${BASH_LINENO[$i+1]}"
+    print_color 7 31 40 ${line}
+    print_color 7 31 40 $1
+    exit 1
 }
 
-require_cmd() {
-    type $1 >/dev/null 2>&1
-    if [ $? -eq 1 ]; then
-        echo "$2 install '$1' first."
-        exit 1
-    fi
+log_test() {
+    debug 123
+    info  456
+    error 789
 }

@@ -217,9 +217,15 @@ choices_menu(){
     done
 }
 
+check_requires() {
+    bash check.sh
+}
+
+
 
 main(){
     declare -a menuItems=(
+        check_requires
         setup_git
         setup_vim
         setup_nvim
@@ -232,8 +238,7 @@ main(){
     choices_menu $menuItems
 }
 
-
-require_cmd bash
-require_cmd curl
-require_cmd git
+require bash
+require curl
+require git
 main
