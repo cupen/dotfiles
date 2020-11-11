@@ -19,9 +19,6 @@ plugins=(git z)
 
 # User configuration
 export PATH=$HOME/bin:/usr/local/bin:$PATH
-# export MANPATH="/usr/local/man:$MANPATH"
-
-[ -f $HOME/.zshrc.local ] && source $HOME/.zshrc.local
 source $ZSH/oh-my-zsh.sh
 
 # You may need to manually set your language environment
@@ -34,21 +31,10 @@ source $ZSH/oh-my-zsh.sh
 #   export EDITOR='mvim'
 # fi
 
-# Compilation flags
-# export ARCHFLAGS="-arch x86_64"
-
 # ssh
 # export SSH_KEY_PATH="~/.ssh/dsa_id"
+[ -f $HOME/.zshrc.local ] && source $HOME/.zshrc.local
 
-# Set personal aliases, overriding those provided by oh-my-zsh libs,
-# plugins, and themes. Aliases can be placed here, though oh-my-zsh
-# users are encouraged to define aliases within the ZSH_CUSTOM folder.
-# For a full list of active aliases, run `alias`.
-#
-# Example aliases
-# alias zshconfig="mate ~/.zshrc"
-# alias ohmyzsh="mate ~/.oh-my-zsh"
-#
 
 # vim
 export EDITOR=vim
@@ -63,12 +49,12 @@ export PYSPARK_DRIVER_PYTHON_OPTS="notebook"
 export ETCDCTL_API=3
 
 # path
-export PATH=$PATH:/usr/local/bin
-export PATH=$PATH:$GOROOT/bin:$GOPATH/bin
 export PATH=$PATH:$HOME/.local/bin
+export PATH=$PATH:$GOROOT/bin:$GOPATH/bin
 export PATH=/home/cupen/.nimble/bin:$PATH
 
 # aliases
+alias sudo='sudo '
 alias apt="sudo apt"
 alias apt-get="sudo apt-get"
 alias apt-cache="sudo apt-cache"

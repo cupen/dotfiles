@@ -5,13 +5,12 @@ let s:is_gui = has("gui_running")
 let g:config = {}
 let g:config.uses=['c', 'python', 'nim', 'rust', 'html', 'javascript', 'go', 'c#', 'others']
 let g:config.uses=['others', 'c', 'python', 'go', 'wsl']
-" Load uses {{{
+" load uses {{{
     if filereadable(expand("~/.vimrc.local"))
         source ~/.vimrc.local
     endif
 " }}}
-
-" {{{ Functions
+" {{{ functions
 function! s:get_dir(dirname, ...)
     let dirpath=expand('~/.vim/' . a:dirname . '/')
         if !isdirectory(expand(dirpath))
@@ -28,12 +27,12 @@ function! s:choose_color_scheme(name)
     endif
 endfunction 
 " }}}
-" {{{ Filetype defines
+" {{{ filetype defines
 autocmd BufNewFile,BufReadPost *.md set filetype=markdown
 autocmd BufNewFile,BufReadPost *.puml set filetype=plantuml
 filetype plugin indent on
 " }}}
-" Basic {{{
+" basic {{{
 set cursorline
 set cursorcolumn
 let mapleader = ','
@@ -70,21 +69,21 @@ endif
 
 
 "}}}
-" Encodings {{{
+" encodings {{{
 set encoding=utf-8
 set termencoding=utf-8
 set fileencoding=utf-8
 set fileencodings=ucs-bom,utf-8,cp936,gb18030,big5,euc-jp,euc-kr,latin1
 language messages zh_CN.UTF-8
 "}}}
-" Fold {{{
+" fold {{{
 set foldmethod=marker
 " set foldmethod=syntax
 set foldcolumn=0
 setlocal foldlevel=0
 set foldclose=all " 自动关闭折叠
 "}}}
-" Plugins  {{{
+" plugins  {{{
 call plug#begin('~/.vim/plugged')
 "{{{ Indent
 Plug 'nathanaelkane/vim-indent-guides'
@@ -114,6 +113,7 @@ let g:UltiSnipsJumpBackwardTrigger	= "<c-k>"
 let g:UltiSnipsRemoveSelectModeMappings = 0
 "}}}
 "{{{ FuzzySearch/Motion
+Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'easymotion/vim-easymotion'
 map <Leader> <Plug>(easymotion-prefix)
 
@@ -151,8 +151,10 @@ Plug 'bling/vim-bufferline'
 let g:airline_powerline_fonts=1
 let g:airline#extensions#bufferline#enabled = 1
 let g:airline#extensions#tabline#enabled = 0
-let g:airline_theme='murmur'   " @see https://github.com/vim-airline/vim-airline/wiki/Screenshots
-
+" @see https://github.com/vim-airline/vim-airline/wiki/Screenshots
+" let g:airline_theme='murmur'
+let g:airline_theme='angr'
+" let g:airline_theme='sol'
 "}}}
 " LSP {{{
 Plug 'prabirshrestha/async.vim'
@@ -182,10 +184,13 @@ if executable('gopls')
 endif
 
 " }}}
-" {{{ ColorSchema
-Plug 'sickill/vim-monokai'
+" {{{ Color Schema
+Plug 'patstockwell/vim-monokai-tasty'
+" let g:airline_theme='monokai_tasty'
+Plug 'tomasiser/vim-code-dark'
+" let g:airline_theme='codedark'
 Plug 'tomasr/molokai'
-    let g:rehash256 = 1
+Plug 'crusoexia/vim-monokai'
 " }}}
 "{{{ Basic
 Plug 'w0rp/ale'
@@ -269,7 +274,7 @@ endif "}}}
 call plug#end()
 syntax enable
 "}}}
-" Whitespace {{{
+" whitespace {{{
 set backspace=indent,eol,start                      "allow backspacing everything in insert mode
 set autoindent                                      "automatically indent to match adjacent lines
 set expandtab                                       "spaces instead of tabs
@@ -283,7 +288,7 @@ set shiftround
 set linebreak
 let &showbreak='↪ '
 "}}}
-" Searching {{{
+" search {{{
 set hlsearch                                        "highlight searches
 set incsearch                                       "incremental searching
 set ignorecase                                      "ignore case for searching
@@ -297,7 +302,7 @@ if executable('ag')
     set grepformat=%f:%l:%c:%m
 endif
 "}}}
-" Key Maps {{{
+" key maps {{{
 map <C-J> <C-W>j<C-W>_
 map <C-K> <C-W>k<C-W>_
 map <C-L> <C-W>l<C-W>_
@@ -345,13 +350,11 @@ vnoremap <silent> <c-b> :Denite buffer<cr>
 
 nnoremap <space> @=((foldclosed(line('.')) < 0) ? 'zc':'zo')<cr>  " 折叠开/关
 "}}}
-" Terminal {{{
+" terminal/GUI {{{
 if !s:is_gui
     set t_Co=256
-endif
-" }}}
-" GUI {{{
-if s:is_gui
+    let g:rehash256 = 1
+else
     " set width&height
     set columns=128
     set lines=32
@@ -371,12 +374,17 @@ if s:is_gui
     " 解决菜单乱码
     source $VIMRUNTIME/delmenu.vim
     source $VIMRUNTIME/menu.vim
-    
     " 设置字体
     " set guifont=Source_Code_Pro_Medium:h9
 endif
 " }}}
 
-" set background=dark
-" call s:choose_color_scheme('monokai')
-colorscheme molokai
+if s:is_gui
+    " colorscheme vim-monokai-tasty
+    colorscheme monokai
+else
+    colorscheme molokai
+endif
+
+autocmd FileType json colorscheme codedark
+autocmd FileType go colorscheme codedark

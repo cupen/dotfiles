@@ -95,6 +95,7 @@ setup_vim(){
     
     backup_and_makelink $curdir/.gvimrc  $home/.gvimrc
     backup_and_makelink $curdir/.vimrc   $home/.vimrc
+    pip3 install -U python-language-server
 }
 
 setup_nvim(){
