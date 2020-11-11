@@ -1,0 +1,30 @@
+{
+    "editor.fontFamily": "\"Monospace\"",
+    "explorer.confirmDelete": false,
+    "window.zoomLevel": 1,
+    "window.menuBarVisibility": "default",
+    "editor.suggestSelection": "first",
+    "vsintellicode.modify.editor.suggestSelection": "automaticallyOverrodeDefaultValue",
+    "vscode-neovim.neovimPath": "/usr/local/bin/nvim",
+    "vscode-neovim.useCtrlKeysForInsertMode": false,
+    "vscode-neovim.neovimInitPath": "/home/cupen/.config/nvim/init.vim",
+    "diffEditor.renderSideBySide": false,
+    "terminal.integrated.shell.linux": "/bin/zsh",
+    "debug.onTaskErrors": "debugAnyway",
+    "debug.chrome.useV3": true,
+    "terminal.integrated.fontSize": 15,
+
+    "vim.hlsearch": true,
+    "vim.ignorecase": false,
+    "vim.useSystemClipboard": true,
+    "vim.easymotion": true,
+    "vim.leader": ",",
+
+    "go.useLanguageServer": true,
+    "go.formatTool": "goimports",
+
+    "python.linting.pylintEnabled": true,
+    "python.linting.enabled": true,
+    "python.jediEnabled": false,
+    "python.languageServer": "Microsoft"
+}

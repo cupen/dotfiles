@@ -98,6 +98,16 @@ setup_vim(){
     pip3 install -U python-language-server
 }
 
+setup_vscode(){
+    local vscode_dir="$home/.config/Code - OSS/User/"
+    mkdir -p $vscode_dir
+    backup_and_makelink $curdir/vscode/keybindings.json  $vscode_dir/keybindings.json
+    backup_and_makelink $curdir/vscode/settings.json     $vscode_dir/settings.json
+    # code --install-extention vscodevim.vim
+    # code --install-extention golang.go
+    # code --install-extention ms-vscode.cpptools
+}
+
 setup_nvim(){
     local plug_src=https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
     mkdir -p  ~/.vim
@@ -229,6 +239,7 @@ main(){
         check_requires
         setup_git
         setup_vim
+        setup_vscode
         setup_nvim
         setup_bash
         setup_archlinux
