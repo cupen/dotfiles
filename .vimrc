@@ -378,7 +378,7 @@ else
     " set guifont=Source_Code_Pro_Medium:h9
 endif
 " }}}
-
+" colorscheme {{{
 if s:is_gui
     " colorscheme vim-monokai-tasty
     colorscheme monokai
@@ -388,3 +388,4 @@ endif
 
 autocmd FileType json colorscheme codedark
 autocmd FileType go colorscheme codedark
+" }}}

@@ -95,7 +95,9 @@ setup_vim(){
     
     backup_and_makelink $curdir/.gvimrc  $home/.gvimrc
     backup_and_makelink $curdir/.vimrc   $home/.vimrc
-    pip3 install -U python-language-server
+    vim -c PlugInstall
+    require_cmd python3
+    python3 -m pip install -U python-language-server
 }
 
 setup_vscode(){
@@ -192,23 +194,25 @@ choices_menu(){
     while (( isContinue )); do
         clear
         show_menu
-        echo "You can choice one or more like \"1 3 5 7 9\""
+        echo "Choice one or more like \"1 3 5 7 9\""
+        echo "NOTE: q is quit"
+        echo -e "> \c"
         read choices
         for choice in $choices; do
             case "$choice" in
-            'a')
+            'all')
                 echo "All!!!"
                 for item in ${menuItems[@]}; do
                     echo "Running "$item
                     $item
                 done
                 echo ========= FINISHED ===========
-                read
                 ;;
 
             'q')
                 echo "Quit!!!"
                 let isContinue=0
+                exit 0
                 ;;
 
             *)
@@ -221,9 +225,9 @@ choices_menu(){
                     $cmd
                 fi
                 echo ========= FINISHED ===========
-                read
                 ;;
             esac
+            read
         done
     done
 }
