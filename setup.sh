@@ -152,6 +152,7 @@ setup_git(){
     git config --global user.name       cupen
     git config --global user.email      xcupen@gmail.com
     git config --global push.default    current
+    git config --global core.autocrlf   true
 }
 
 setup_fonts(){
