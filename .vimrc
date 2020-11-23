@@ -74,7 +74,9 @@ set encoding=utf-8
 set termencoding=utf-8
 set fileencoding=utf-8
 set fileencodings=ucs-bom,utf-8,cp936,gb18030,big5,euc-jp,euc-kr,latin1
-language messages zh_CN.UTF-8
+"language messages zh_CN.UTF-8
+language messages en_US.UTF-8
+
 "}}}
 " fold {{{
 set foldmethod=marker
@@ -113,9 +115,8 @@ let g:UltiSnipsRemoveSelectModeMappings = 0
 "}}}
 "{{{ FuzzySearch/Motion
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
+Plug 'brooth/far.vim'
 Plug 'easymotion/vim-easymotion'
-map <Leader> <Plug>(easymotion-prefix)
-
 Plug 'Shougo/unite.vim'
 if has('nvim')
   Plug 'Shougo/denite.nvim', { 'do': ':UpdateRemotePlugins' }
