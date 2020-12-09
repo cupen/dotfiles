@@ -269,7 +269,7 @@ Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }
 endif "}}}
 if count(g:config.uses, 'c#') "{{{
 Plug 'OmniSharp/omnisharp-vim'
-let g:OmniSharp_server_stdio = 1
+let g:OmniSharp_server_path = '/usr/local/opt/omisharp/run'
 endif "}}}
 call plug#end()
 syntax enable
