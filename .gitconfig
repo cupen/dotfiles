@@ -8,9 +8,12 @@
 [url "ssh://git@github.com/"]
 	insteadOf = https://github.com/
 
+[init]
+	defaultBranch = master
+
 [diff "ansible-vault"]
-	textconv = ansible-vault view
-	# Do not cache the vault contents
+    # command = /usr/bin/ansible-vault view 
+    textconv = "/usr/bin/ansible-vault view"
 	cachetextconv = false
 
 [merge "ansible-vault"]
@@ -19,11 +22,10 @@
 
 [diff "words"]
 	textconv=echo 
-	# Do not cache the vault contents
 	cachetextconv = false
 
 [alias]
-	graph = log --graph --date-order -C -M --pretty=format:\"<%h> %ad [%an] %Cgreen%d%Creset %s\" --all --date=short
+	logs = log --graph --date-order -C -M --pretty=format:\"<%h> %ad [%an] %Cgreen%d%Creset %s\" --all --date=short
 
 [core]
 	quotepath = false
