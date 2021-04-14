@@ -96,7 +96,7 @@ setup_vim(){
     backup_and_makelink $curdir/.gvimrc  $home/.gvimrc
     backup_and_makelink $curdir/.vimrc   $home/.vimrc
     vim -c PlugInstall
-    require_cmd python3
+    require python3
     python3 -m pip install -U python-language-server
 }
 
@@ -133,6 +133,10 @@ setup_zsh(){
     fi
     chsh -s /bin/zsh
     backup_and_makelink $curdir/.zshrc              $home/.zshrc
+}
+
+setup_tmux(){
+    backup_and_makelink $curdir/.tmux.conf              $home/.tmux.conf
 }
 
 setup_archlinux(){
@@ -251,6 +255,7 @@ main(){
         setup_goagent
         setup_zsh
         setup_fonts
+        setup_tmux
     )
     choices_menu $menuItems
 }
