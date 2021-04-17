@@ -126,13 +126,14 @@ setup_nvim(){
 # }
 
 setup_zsh(){
-    require_cmd zsh
-    setup_git_repo git://github.com/ohmyzsh/ohmyzsh/.git $home/.oh-my-zsh
+    require zsh
+    setup_git_repo https://github.com/ohmyzsh/ohmyzsh.git $home/.oh-my-zsh
     if [ $? -eq 0 ]; then
         cp $home/.oh-my-zsh/templates/zshrc.zsh-template $home/.zshrc
     fi
     chsh -s /bin/zsh
     backup_and_makelink $curdir/.zshrc              $home/.zshrc
+    setup_git_repo https://github.com/romkatv/powerlevel10k.git  $home/.oh-my-zsh/custom/themes/powerlevel10k
 }
 
 setup_tmux(){
@@ -149,7 +150,7 @@ setup_goagent(){
 }
 
 setup_python(){
-    require_cmd python
+    require python
 }
 
 setup_git(){
@@ -160,9 +161,9 @@ setup_git(){
 }
 
 setup_fonts(){
-    require_cmd mkfontscale
-    require_cmd mkfontdir
-    require_cmd sudo
+    require mkfontscale
+    require mkfontdir
+    require sudo
     setup_git_repo git@github.com:Lokaltog/powerline-fonts.git $home/.fonts
 
     localDir="/usr/share/fonts/TTF/powerline"
@@ -246,16 +247,16 @@ check_requires() {
 main(){
     declare -a menuItems=(
         check_requires
-        setup_git
+        setup_zsh
         setup_vim
+        setup_tmux
+        setup_git
         setup_vscode
         setup_nvim
         setup_bash
         setup_archlinux
         setup_goagent
-        setup_zsh
         setup_fonts
-        setup_tmux
     )
     choices_menu $menuItems
 }

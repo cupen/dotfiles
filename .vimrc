@@ -102,7 +102,6 @@ Plug 'ncm2/ncm2-pyclang'
 Plug 'ncm2/ncm2-vim-lsp'
 Plug 'ncm2/ncm2-ultisnips'
 Plug 'ncm2/ncm2-go'
-Plug 'SirVer/ultisnips'
 
 inoremap <silent> <expr> <CR> ncm2_ultisnips#expand_or("\<CR>", 'n')
 
