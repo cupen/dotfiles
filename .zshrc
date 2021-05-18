@@ -5,6 +5,7 @@ if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]
   source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
 fi
 
+
 # Path to your oh-my-zsh installation.
 export ZSH=$HOME/.oh-my-zsh
 
@@ -26,7 +27,7 @@ HIST_STAMPS="yyyy/mm/dd"
 # Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(git z)
+plugins=(git z minikube kubectl)
 
 # User configuration
 export PATH=$HOME/bin:/usr/local/bin:$PATH
@@ -69,9 +70,9 @@ alias visudo="sudo visudo"
 alias rm='rm -i'
 alias vi='vim'
 alias tmux='tmux -2'
-alias docker='sudo docker'
 alias xclip='xclip -selection clipboard'
 alias grep='grep --color'
+alias miku='minikube kubectl -- '
 
 
 # bind key
@@ -83,6 +84,7 @@ bindkey '[3~'   delete-char        # Linux console, xterm, gnome-terminal
 bindkey '[4~'   end-of-line        # Linux console
 bindkey '[F'    end-of-line        # xterm
 bindkey 'OF'    end-of-line        # gnome-terminal
+
 
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
