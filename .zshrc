@@ -7,7 +7,7 @@ fi
 
 
 # Path to your oh-my-zsh installation.
-export ZSH=$HOME/.oh-my-zsh
+export ZSH=$HOME/.ohmyzsh
 
 #ZSH_THEME="linuxonly"
 ZSH_THEME="amuse"

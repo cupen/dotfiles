@@ -127,9 +127,9 @@ setup_nvim(){
 
 setup_zsh(){
     require zsh
-    setup_git_repo https://github.com/ohmyzsh/ohmyzsh.git $home/.oh-my-zsh
+    setup_git_repo https://github.com/ohmyzsh/ohmyzsh.git $home/.ohmyzsh
     if [ $? -eq 0 ]; then
-        cp $home/.oh-my-zsh/templates/zshrc.zsh-template $home/.zshrc
+        cp $home/.ohmyzsh/templates/zshrc.zsh-template $home/.zshrc
     fi
     chsh -s /bin/zsh
     backup_and_makelink $curdir/.zshrc              $home/.zshrc
