@@ -87,14 +87,48 @@ set foldclose=all " 自动关闭折叠
 "}}}
 " plugins  {{{
 call plug#begin('~/.vim/plugged')
-"{{{ Indent
+"{{{ Basic
 Plug 'nathanaelkane/vim-indent-guides'
 if s:is_gui
     hi IndentGuidesOdd ctermbg=black
     hi IndentGuidesEven ctermbg=darkgrey
 endif
+
+
+Plug 'w0rp/ale'
+" let g:ale_sign_error = '>>'
+" let g:ale_sign_warning = '--'
+Plug 'skywind3000/asyncrun.vim'
+
+Plug 'airblade/vim-gitgutter'
+Plug 'majutsushi/tagbar', {'on': 'TagbarToggle' }
+"Plug 'majutsushi/tagbar'
+    let g:tagbar_type_markdown = {
+        \ 'ctagstype' : 'markdown',
+        \ 'kinds' : [
+            \ 'h:Heading_L1',
+            \ 'i:Heading_L2',
+            \ 'k:Heading_L3'
+        \ ]
+    \ }
+
+Plug 'godlygeek/tabular'
+" Plug 'othree/eregex.vim'
+" let g:eregex_default_enable = 1
+
+Plug 'scrooloose/nerdtree', {'on':['NERDTreeToggle','NERDTreeFind']}
+    let NERDTreeShowHidden=1
+    let NERDTreeQuitOnOpen=0
+    let NERDTreeShowLineNumbers=1
+    let NERDTreeChDirMode=0
+    let NERDTreeShowBookmarks=1
+    let NERDTreeIgnore=['^.git$','^.hg$', '^.svn$']
+    let NERDTreeBookmarksFile=s:get_dir('nerdtree') . 'NERDTreeBookmarks'
+    " 退出所有buffer时间自动关闭nerd https://github.com/scrooloose/nerdtree/issues/21
+    autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTreeType") && b:NERDTreeType == "primary") | q | endif
+Plug 'Xuyuanp/nerdtree-git-plugin', {'on':['NERDTreeToggle','NERDTreeFind']} 
 "}}}
-" {{{ AutoCompletion
+" {{{ Auto Completion
 " Plug 'Valloric/YouCompleteMe', { 'do': './install.py' }
 " Plug 'ajh17/VimCompletesMe'
 Plug 'ncm2/ncm2'
@@ -113,7 +147,7 @@ let g:UltiSnipsJumpForwardTrigger	= "<c-j>"
 let g:UltiSnipsJumpBackwardTrigger	= "<c-k>"
 let g:UltiSnipsRemoveSelectModeMappings = 0
 "}}}
-"{{{ FuzzySearch/Motion
+"{{{ Fuzzy Search/Motion
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'brooth/far.vim'
 Plug 'easymotion/vim-easymotion'
@@ -163,26 +197,7 @@ Plug 'prabirshrestha/asyncomplete.vim'
 Plug 'prabirshrestha/asyncomplete-lsp.vim'
 let g:lsp_async_completion = 1
 
-if executable('clangd')
-    au User lsp_setup call lsp#register_server({
-        \ 'name': 'clangd',
-        \ 'cmd': {server_info->['clangd', '-background-index']},
-        \ 'whitelist': ['c', 'cpp', 'objc', 'objcpp'],
-        \ })
-endif
-
-" GO111MODULE=on go get golang.org/x/tools/gopls@latest
-" https://github.com/golang/tools/tree/master/gopls
-" https://github.com/prabirshrestha/vim-lsp/wiki/Servers-Go
-if executable('gopls')
-    au User lsp_setup call lsp#register_server({
-        \ 'name': 'gopls',
-        \ 'cmd': {server_info->['gopls']},
-        \ 'whitelist': ['go'],
-        \ })
-    autocmd BufWritePre *.go LspDocumentFormatSync
-endif
-
+Plug 'mattn/vim-lsp-settings'
 " }}}
 " {{{ Color Schema
 Plug 'patstockwell/vim-monokai-tasty'
@@ -192,42 +207,6 @@ Plug 'tomasiser/vim-code-dark'
 Plug 'tomasr/molokai'
 Plug 'crusoexia/vim-monokai'
 " }}}
-"{{{ Basic
-Plug 'w0rp/ale'
-"Plug 'idanarye/vim-vebugger'
-" let g:ale_sign_error = '>>'
-" let g:ale_sign_warning = '--'
-
-Plug 'airblade/vim-gitgutter'
-Plug 'majutsushi/tagbar', {'on': 'TagbarToggle' }
-"Plug 'majutsushi/tagbar'
-    let g:tagbar_type_markdown = {
-        \ 'ctagstype' : 'markdown',
-        \ 'kinds' : [
-            \ 'h:Heading_L1',
-            \ 'i:Heading_L2',
-            \ 'k:Heading_L3'
-        \ ]
-    \ }
-
-Plug 'godlygeek/tabular'
-" Plug 'othree/eregex.vim'
-" let g:eregex_default_enable = 1
-
-Plug 'scrooloose/nerdtree', {'on':['NERDTreeToggle','NERDTreeFind']}
-    let NERDTreeShowHidden=1
-    let NERDTreeQuitOnOpen=0
-    let NERDTreeShowLineNumbers=1
-    let NERDTreeChDirMode=0
-    let NERDTreeShowBookmarks=1
-    let NERDTreeIgnore=['^.git$','^.hg$', '^.svn$']
-    let NERDTreeBookmarksFile=s:get_dir('nerdtree') . 'NERDTreeBookmarks'
-    " 退出所有buffer时间自动关闭nerd https://github.com/scrooloose/nerdtree/issues/21
-    autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTreeType") && b:NERDTreeType == "primary") | q | endif
-Plug 'Xuyuanp/nerdtree-git-plugin', {'on':['NERDTreeToggle','NERDTreeFind']} 
-
-
-"}}}
 if count(g:config.uses, 'others') "{{{
 Plug 'reedes/vim-wheel'
 Plug 'cespare/vim-toml'
@@ -235,7 +214,7 @@ Plug 'tpope/vim-markdown', { 'for': 'markdown' }
 Plug 'aklt/plantuml-syntax', { 'for': 'platuml' }
 endif "}}}
 if count(g:config.uses, 'python') "{{{
-Plug 'ryanolsonx/vim-lsp-python'
+" Plug 'ryanolsonx/vim-lsp-python'
 " pip install python-language-server
 endif
 "}}}
