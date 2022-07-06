@@ -5,15 +5,11 @@
 [push]
 	default = current
 
-[url "ssh://git@github.com/"]
-	insteadOf = https://github.com/
-
 [init]
 	defaultBranch = master
 
 [diff "ansible-vault"]
-    # command = /usr/bin/ansible-vault view 
-    textconv = "/usr/bin/ansible-vault view"
+    textconv = "ansible-vault view"
 	cachetextconv = false
 
 [merge "ansible-vault"]
@@ -29,3 +25,6 @@
 
 [core]
 	quotepath = false
+
+[url "ssh://git@github.com/"]
+	insteadOf = https://github.com/
