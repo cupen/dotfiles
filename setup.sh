@@ -153,6 +153,11 @@ setup_python(){
     require python
 }
 
+setup_starship(){
+    mkdir -p $home/.config
+    backup_and_makelink $curdir/starship.toml            $home/.config/starship.toml
+}
+
 setup_git(){
     git config --global user.name       cupen
     git config --global user.email      xcupen@gmail.com
@@ -248,6 +253,7 @@ main(){
     declare -a menuItems=(
         check_requires
         setup_zsh
+        setup_starship
         setup_vim
         setup_tmux
         setup_git
