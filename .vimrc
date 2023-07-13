@@ -95,7 +95,7 @@ if s:is_gui
 endif
 
 
-Plug 'w0rp/ale'
+" Plug 'w0rp/ale'
 " let g:ale_sign_error = '>>'
 " let g:ale_sign_warning = '--'
 Plug 'skywind3000/asyncrun.vim'
@@ -212,6 +212,7 @@ Plug 'reedes/vim-wheel'
 Plug 'cespare/vim-toml'
 Plug 'tpope/vim-markdown', { 'for': 'markdown' }
 Plug 'aklt/plantuml-syntax', { 'for': 'platuml' }
+Plug 'earthly/earthly.vim', { 'branch': 'main' }
 endif "}}}
 if count(g:config.uses, 'python') "{{{
 " Plug 'ryanolsonx/vim-lsp-python'

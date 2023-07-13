@@ -17,5 +17,7 @@
     "vim.handleKeys": {
         "<c-a>": true,
         "<c-f>": true
-    }
+    },
+	"editor.tabSize": 4,
+	"omnisharp.useModernNet": false
 }

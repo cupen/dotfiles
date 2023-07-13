@@ -1,33 +1,40 @@
 # Get editor completions based on the config schema
 "$schema" = 'https://starship.rs/config-schema.json'
 
-format = """
-[\uE0B6](fg:#1C4961)[$directory](bg:#1C4961)[\uE0B0](fg:#1C4961 bg:#2F79A1)$git_branch[\uE0B0](fg:#2F79A1 bg:#3A95C7)$git_status[\uE0B0](#3A95C7 bg:#40A9E0)$time[\uE0B0](#40A9E0 bg:none) $all$character """
 
-# Inserts a blank line between shell prompts
+format = """
+$username\
+[\uE0B0](#9A348E bg:#1C4961)[ $directory](fg:white bg:#1C4961)\
+[\uE0B0](#1C4961 bg:#2F79A1)$git_branch\
+[\uE0B0](#2F79A1 bg:#3A95C7)$git_status\
+[\uE0B0](#3A95C7 bg:#40A9E0)$time\
+[\uE0B0](#40A9E0)\n$character
+"""
+
 add_newline = true
+command_timeout=1000
+
+[username]
+show_always = true
+style_user = "bg:#9A348E"
+style_root = "bg:#9A348E"
+format = '[$user ]($style)'
+
 
 [directory]
-style = "bg:#1C4961 fg:white"
+style = "fg:white bg:#1C4961"
+# format = "[ $directory ]($style)"
 
 [git_branch]
+style = "fg:white bg:#2F79A1"
 format = "[ $symbol$branch ]($style)"
-style = "bg:#2F79A1 fg:white"
 
 [git_status]
+style = "fg:white bg:#3A95C7"
 format = "[ $all_status$ahead_behind ]($style)"
-style = "bg:#3A95C7 fg:white"
 
 [time]
 disabled = false
+style = "fg:white bg:#10A9E0"
 format = "[ $time ]($style)"
-style = "bg:#40A9E0 fg:white"
 
-[python]
-disabled = true
-
-[character]
-success_symbol = '[❯](bold green)' 
-
-[package]
-disabled = true
