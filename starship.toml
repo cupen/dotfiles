@@ -8,8 +8,10 @@ $username\
 [\uE0B0](#1C4961 bg:#2F79A1)$git_branch\
 [\uE0B0](#2F79A1 bg:#3A95C7)$git_status\
 [\uE0B0](#3A95C7 bg:#40A9E0)$time\
-[\uE0B0](#40A9E0)\n$character
+[\uE0B0](#40A9E0)\n> 
 """
+
+# [\uE0B0](#40A9E0)\n$character
 
 add_newline = true
 command_timeout=1000

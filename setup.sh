@@ -101,10 +101,11 @@ setup_vim(){
 }
 
 setup_vscode(){
-    local vscode_dir="$home/.config/Code - OSS/User/"
+    # local vscode_dir="$home/.config/Code - OSS"
+    local vscode_dir="$home/.config/Code"
     mkdir -p $vscode_dir
-    backup_and_makelink $curdir/vscode/keybindings.json  $vscode_dir/keybindings.json
-    backup_and_makelink $curdir/vscode/settings.json     $vscode_dir/settings.json
+    backup_and_makelink $curdir/vscode/keybindings.json  $vscode_dir/User/keybindings.json
+    backup_and_makelink $curdir/vscode/settings.json     $vscode_dir/User/settings.json
     # code --install-extention vscodevim.vim
     # code --install-extention golang.go
     # code --install-extention ms-vscode.cpptools
@@ -133,7 +134,7 @@ setup_zsh(){
     fi
     chsh -s /bin/zsh
     backup_and_makelink $curdir/.zshrc              $home/.zshrc
-    setup_git_repo https://github.com/romkatv/powerlevel10k.git  $home/.oh-my-zsh/custom/themes/powerlevel10k
+    # setup_git_repo https://github.com/romkatv/powerlevel10k.git  $home/.oh-my-zsh/custom/themes/powerlevel10k
 }
 
 setup_tmux(){
@@ -151,6 +152,7 @@ setup_goagent(){
 
 setup_python(){
     require python
+    pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple
 }
 
 setup_starship(){
@@ -247,7 +249,13 @@ check_requires() {
     bash check.sh
 }
 
-
+require() {
+    type $1 >/dev/null 2>&1
+    if [ $? -eq 1 ]; then
+        echo "$2 install '$1' first."
+        exit 1
+    fi
+}
 
 main(){
     declare -a menuItems=(
