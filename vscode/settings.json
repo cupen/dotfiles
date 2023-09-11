@@ -1,23 +1,28 @@
 {
-    "editor.fontFamily": "\"Monospace\"",
+    "editor.fontFamily": "'Hack Bold', 'Source Code Pro Semibold',  monospace, 'Droid Sans Fallback'",
+    "editor.fontSize": 18,
+    "editor.tabSize": 4,
+    "editor.suggestSelection": "first",
+
     "explorer.confirmDelete": false,
     "window.zoomLevel": 1,
-    "editor.suggestSelection": "first",
     "vsintellicode.modify.editor.suggestSelection": "automaticallyOverrodeDefaultValue",
+
     "go.useLanguageServer": true,
     "go.formatTool": "goimports",
+
     "diffEditor.renderSideBySide": false,
     "debug.onTaskErrors": "debugAnyway",
     "terminal.integrated.fontSize": 15,
-    "go.toolsManagement.autoUpdate": true,
     "plantuml.jar": "/usr/share/java/plantuml/plantuml.jar",
+    
+    "omnisharp.useModernNet": false,
+
     "vim.easymotion": true,
     "vim.incsearch": true,
     "vim.useSystemClipboard": true,
     "vim.handleKeys": {
         "<c-a>": true,
         "<c-f>": true
-    },
-	"editor.tabSize": 4,
-	"omnisharp.useModernNet": false
+    }
 }
