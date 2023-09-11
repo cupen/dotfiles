@@ -89,7 +89,8 @@ setup_bash() {
 }
 
 setup_vim(){
-    local plug_src=https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+    # local plug_src=https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+    local plug_src=https://raw.staticdn.net/junegunn/vim-plug/master/plug.vim
     mkdir -p  ~/.vim
     curl -fLo ~/.vim/autoload/plug.vim --create-dirs $plug_src
     
