@@ -1,12 +1,11 @@
 {
     "editor.fontFamily": "'Hack Bold', 'Source Code Pro Semibold',  monospace, 'Droid Sans Fallback'",
-    "editor.fontSize": 18,
+    "editor.fontSize": 20,
     "editor.tabSize": 4,
     "editor.suggestSelection": "first",
 
     "explorer.confirmDelete": false,
     "window.zoomLevel": 1,
-    "vsintellicode.modify.editor.suggestSelection": "automaticallyOverrodeDefaultValue",
 
     "go.useLanguageServer": true,
     "go.formatTool": "goimports",
@@ -24,5 +23,13 @@
     "vim.handleKeys": {
         "<c-a>": true,
         "<c-f>": true
-    }
+    },
+    "settingsSync.ignoredExtensions": [
+        "johnstoncode.svn-scm"
+    ],
+    "go.toolsManagement.autoUpdate": true,
+    "git.openRepositoryInParentFolders": "never",
+    "cmake.showOptionsMovedNotification": false,
+    "github.copilot.editor.enableAutoCompletions": true,
+    "workbench.editor.wrapTabs": true
 }

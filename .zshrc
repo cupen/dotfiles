@@ -56,6 +56,9 @@ export PATH=$PATH:$HOME/.local/bin
 export PATH=$PATH:$GOROOT/bin:$GOPATH/bin
 export PATH=/home/cupen/.nimble/bin:$PATH
 
+export RUSTUP_DIST_SERVER="https://rsproxy.cn"
+export RUSTUP_UPDATE_ROOT="https://rsproxy.cn/rustup"
+
 # aliases
 alias visudo="sudo visudo"
 alias rm='rm -i'

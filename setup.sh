@@ -10,23 +10,22 @@ curdir=`pwd`
 # $1 directory of repo
 # $2 branch of repo
 ##
-upgrade_git_repo() {
+git_repo_update() {
     info "Trying to update git repo: $1"
     
     dir=$1
     branch=$2
     # git branch --no-color 2> /dev/null
-    if [ ! -d $dir"/.git" ]; then
-        error $dir' was not a valid git repo.'
+    if [ ! -d "$dir/.git" ]; then
+        error $dir' is not a valid git repo.'
     fi
     
     cd $dir &&
     git pull --progress origin $branch || error "git returned "$?
 }
 
-clone_git_repo(){
+git_repo_clone(){
     info "Trying to clone git repo: $1"
-
     url=${1?"Missing a paramer:url"}
     dir=${2=""}
     branch=$3
@@ -35,9 +34,6 @@ clone_git_repo(){
     else
         git clone --progress --depth=1 --single-branch $url $dir || error "git clone returned "$?
     fi
-
-    echo 1
-
 }
 
 ##
@@ -46,16 +42,16 @@ clone_git_repo(){
 # $2 directory of repo
 # $3 git branch
 ##
-setup_git_repo() {
+git_repo() {
     url=${1?"Missing a paramer:url"}
     dir=${2=""}
     branch=$3
 
     if [ -d $dir ]; then
-        upgrade_git_repo $dir $branch
+        git_repo_update $dir $branch
         return 1
     else
-        clone_git_repo $url $dir $branch
+        git_repo_clone $url $dir $branch
         return 0
     fi
 }
@@ -123,18 +119,18 @@ setup_nvim(){
 
 # setup_vundle(){
 #    mkdir -p $home/.vim/bundle
-#    setup_git_repo git://github.com/gmarik/vundle.git $home/.vim/bundle/Vundle.vim
+#    git_repo git://github.com/gmarik/vundle.git $home/.vim/bundle/Vundle.vim
 # }
 
 setup_zsh(){
     require zsh
-    setup_git_repo https://github.com/ohmyzsh/ohmyzsh.git $home/.ohmyzsh
+    git_repo https://github.com/ohmyzsh/ohmyzsh.git $home/.ohmyzsh
     if [ $? -eq 0 ]; then
         cp $home/.ohmyzsh/templates/zshrc.zsh-template $home/.zshrc
     fi
     chsh -s /bin/zsh
     backup_and_makelink $curdir/.zshrc              $home/.zshrc
-    # setup_git_repo https://github.com/romkatv/powerlevel10k.git  $home/.oh-my-zsh/custom/themes/powerlevel10k
+    # git_repo https://github.com/romkatv/powerlevel10k.git  $home/.oh-my-zsh/custom/themes/powerlevel10k
 }
 
 setup_tmux(){
@@ -142,12 +138,12 @@ setup_tmux(){
 }
 
 setup_archlinux(){
-    setup_git_repo git://github.com/helmuthdu/aui.git $home/.aui
+    git_repo git://github.com/helmuthdu/aui.git $home/.aui
     info "see \"cd $home/.aui\""
 }
 
 setup_goagent(){
-    setup_git_repo git://github.com/goagent/goagent.git  $home/goagent
+    git_repo git://github.com/goagent/goagent.git  $home/goagent
 }
 
 setup_python(){
@@ -161,17 +157,19 @@ setup_starship(){
 }
 
 setup_git(){
-    git config --global user.name       cupen
-    git config --global user.email      xcupen@gmail.com
-    git config --global push.default    current
-    git config --global core.autocrlf   input
+    git config --global user.name      cupen
+    git config --global user.email     xcupen@gmail.com
+    git config --global push.default   current
+    git config --global core.autocrlf  input
+    git config --global alias.ss  status
+    git config --global alias.ci  commit
 }
 
 setup_fonts(){
     require mkfontscale
     require mkfontdir
     require sudo
-    setup_git_repo git@github.com:Lokaltog/powerline-fonts.git $home/.fonts
+    git_repo git@github.com:Lokaltog/powerline-fonts.git $home/.fonts
 
     localDir="/usr/share/fonts/TTF/powerline"
     sudo mkdir -p $localDir
@@ -193,11 +191,11 @@ show_menu(){
     echo "==========================="
     let index=0
     for item in ${menuItems[@]}; do
-        echo $index". Run "$item
+        echo $index": Run "$item
         let index++
     done
-    echo "a. All"
-    echo "q. Quit"
+    echo "a: All"
+    echo "q: Quit"
     echo "==========================="
 
 }
@@ -223,7 +221,7 @@ choices_menu(){
                 ;;
 
             'q')
-                echo "Quit!!!"
+                echo "Quit"
                 let isContinue=0
                 exit 0
                 ;;
