@@ -163,6 +163,8 @@ setup_git(){
     git config --global core.autocrlf  input
     git config --global alias.ss  status
     git config --global alias.ci  commit
+    git config --global alias.ls  log --stat
+    git config --global alias.update "pull --rebase --autostash"
 }
 
 setup_fonts(){
