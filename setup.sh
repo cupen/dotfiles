@@ -2,8 +2,8 @@
 source ./base/*.sh
 # source ./archlinux/*.sh
 
-home=$HOME
-curdir=`pwd`
+home_dir=$HOME
+work_dir=`pwd`
 
 ##
 #
@@ -81,7 +81,7 @@ link_file(){
 }
 
 setup_bash() {
-    backup_and_makelink $curdir/.bashrc $home/.bashrc
+    backup_and_makelink $work_dir/.bashrc $home_dir/.bashrc
 }
 
 setup_vim(){
@@ -89,19 +89,19 @@ setup_vim(){
     mkdir -p  ~/.vim
     curl -fLo ~/.vim/autoload/plug.vim --create-dirs $plug_src
     
-    backup_and_makelink $curdir/.gvimrc  $home/.gvimrc
-    backup_and_makelink $curdir/.vimrc   $home/.vimrc
+    backup_and_makelink $work_dir/.gvimrc  $home_dir/.gvimrc
+    backup_and_makelink $work_dir/.vimrc   $home_dir/.vimrc
     vim -c PlugInstall
     require python3
     python3 -m pip install -U python-language-server
 }
 
 setup_vscode(){
-    # local vscode_dir="$home/.config/Code - OSS"
-    local vscode_dir="$home/.config/Code"
+    # local vscode_dir="$home_dir/.config/Code - OSS"
+    local vscode_dir="$home_dir/.config/Code"
     mkdir -p $vscode_dir
-    backup_and_makelink $curdir/vscode/keybindings.json  $vscode_dir/User/keybindings.json
-    backup_and_makelink $curdir/vscode/settings.json     $vscode_dir/User/settings.json
+    backup_and_makelink $work_dir/vscode/keybindings.json  $vscode_dir/User/keybindings.json
+    backup_and_makelink $work_dir/vscode/settings.json     $vscode_dir/User/settings.json
     # code --install-extention vscodevim.vim
     # code --install-extention golang.go
     # code --install-extention ms-vscode.cpptools
@@ -112,38 +112,38 @@ setup_nvim(){
     mkdir -p  ~/.vim
     curl -fLo ~/.vim/autoload/plug.vim --create-dirs $plug_src
     
-    local config_dir=$home/.config
+    local config_dir=$home_dir/.config
     mkdir -p  $config_dir
-    link_dir $curdir/config/nvim $config_dir/nvim
+    link_dir $work_dir/config/nvim $config_dir/nvim
 }
 
 # setup_vundle(){
-#    mkdir -p $home/.vim/bundle
-#    git_repo git://github.com/gmarik/vundle.git $home/.vim/bundle/Vundle.vim
+#    mkdir -p $home_dir/.vim/bundle
+#    git_repo git://github.com/gmarik/vundle.git $home_dir/.vim/bundle/Vundle.vim
 # }
 
 setup_zsh(){
     require zsh
-    git_repo https://github.com/ohmyzsh/ohmyzsh.git $home/.ohmyzsh
+    git_repo https://github.com/ohmyzsh/ohmyzsh.git $home_dir/.ohmyzsh
     if [ $? -eq 0 ]; then
-        cp $home/.ohmyzsh/templates/zshrc.zsh-template $home/.zshrc
+        cp $home_dir/.ohmyzsh/templates/zshrc.zsh-template $home_dir/.zshrc
     fi
     chsh -s /bin/zsh
-    backup_and_makelink $curdir/.zshrc              $home/.zshrc
-    # git_repo https://github.com/romkatv/powerlevel10k.git  $home/.oh-my-zsh/custom/themes/powerlevel10k
+    backup_and_makelink $work_dir/.zshrc              $home_dir/.zshrc
+    # git_repo https://github.com/romkatv/powerlevel10k.git  $home_dir/.oh-my-zsh/custom/themes/powerlevel10k
 }
 
 setup_tmux(){
-    backup_and_makelink $curdir/.tmux.conf              $home/.tmux.conf
+    backup_and_makelink $work_dir/.tmux.conf              $home_dir/.tmux.conf
 }
 
 setup_archlinux(){
-    git_repo git://github.com/helmuthdu/aui.git $home/.aui
-    info "see \"cd $home/.aui\""
+    git_repo git://github.com/helmuthdu/aui.git $home_dir/.aui
+    info "see \"cd $home_dir/.aui\""
 }
 
 setup_goagent(){
-    git_repo git://github.com/goagent/goagent.git  $home/goagent
+    git_repo git://github.com/goagent/goagent.git  $home_dir/goagent
 }
 
 setup_python(){
@@ -152,8 +152,8 @@ setup_python(){
 }
 
 setup_starship(){
-    mkdir -p $home/.config
-    backup_and_makelink $curdir/starship.toml            $home/.config/starship.toml
+    mkdir -p $home_dir/.config
+    backup_and_makelink $work_dir/starship.toml            $home_dir/.config/starship.toml
 }
 
 setup_git(){
@@ -171,7 +171,7 @@ setup_fonts(){
     require mkfontscale
     require mkfontdir
     require sudo
-    git_repo git@github.com:Lokaltog/powerline-fonts.git $home/.fonts
+    git_repo git@github.com:Lokaltog/powerline-fonts.git $home_dir/.fonts
 
     localDir="/usr/share/fonts/TTF/powerline"
     sudo mkdir -p $localDir
@@ -181,12 +181,25 @@ setup_fonts(){
     sudo mkfontdir $localDir
 
     wget -q https://github.com/Lokaltog/powerline/raw/develop/font/10-powerline-symbols.conf
-    mkdir -p $home/.config/fontconfig/conf.d/
-    mv 10-powerline-symbols.conf $home/.config/fontconfig/conf.d/
+    mkdir -p $home_dir/.config/fontconfig/conf.d/
+    mv 10-powerline-symbols.conf $home_dir/.config/fontconfig/conf.d/
 }
 
 setup_conky(){
-    backup_and_makelink $curdir/.conkyrc $home/.conkyrc
+    backup_and_makelink $work_dir/.conkyrc $home_dir/.conkyrc
+}
+
+setup_delta(){
+    backup_file $home_dir/.gitconfig
+    git config --global core.pager delta
+    git config --global interactive.diffFilter 'delta --color-only'
+    git config --global merge.conflictStyle zdiff3
+
+    git config --global delta.navigate true
+    git config --global delta.dark true
+    git config --global delta.side-by-side true
+    git config --global delta.line-numbers true
+    git config --global delta.wrap-max-lines 1024
 }
 
 show_menu(){
@@ -271,6 +284,7 @@ main(){
         setup_archlinux
         setup_goagent
         setup_fonts
+        setup_delta
     )
     choices_menu $menuItems
 }
@@ -278,4 +292,5 @@ main(){
 require bash
 require curl
 require git
+require delta
 main
