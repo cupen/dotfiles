@@ -31,5 +31,6 @@
     "git.openRepositoryInParentFolders": "never",
     "cmake.showOptionsMovedNotification": false,
     "github.copilot.editor.enableAutoCompletions": true,
-    "workbench.editor.wrapTabs": true
+    "workbench.editor.wrapTabs": true,
+    "makefile.configureOnOpen": true
 }

@@ -202,6 +202,15 @@ setup_delta(){
     git config --global delta.wrap-max-lines 1024
 }
 
+setup_docker(){
+    echo "starting docker"
+    sudo systemctl start  docker
+    sudo systemctl enable docker
+    newgrp docker
+    echo "started docker"
+    docker info
+}
+
 show_menu(){
     echo "==========================="
     let index=0
@@ -285,6 +294,7 @@ main(){
         setup_goagent
         setup_fonts
         setup_delta
+	setup_docker
     )
     choices_menu $menuItems
 }
